@@ -1,3 +1,18 @@
-<p>
-  create-list works!
-</p>
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Add a new list</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <form [formGroup]="listForm" (submit)="save()">
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input formControlName="name" required></ion-input>
+    </ion-item>
+
+    <ion-button type="submit" expand="block" [disabled]="!listForm.valid">Submit</ion-button>
+  </form>
+</ion-content>

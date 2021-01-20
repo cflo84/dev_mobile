@@ -10,23 +10,18 @@ export class ListService {
   constructor() {
     this.lists = [];
     this.lists.push(new List("List1"));
+    this.lists.push(new List("List2"));
   }
 
   getOne (id : string): List {
-    for (let list of this.lists) {
-      if (list.name == id) {
-        return list;
-      }
-    }
-    
-    return null;
+    return this.lists.find((list) => list.id === id);
   }
 
   getAll() : List[] {
     return this.lists;
   }
 
-  create(l : List) : void {
-    this.lists.push(l);
+  add(list : List) : void {
+    this.lists.push(list);
   }
 }
