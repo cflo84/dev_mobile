@@ -6,7 +6,7 @@ export class List {
     todos: Todo[];
 
     constructor(name: string) {
-        this.id = "_" + Math.random.toString().substr(2, 9);
+        this.id = "_" + Math.random().toString().substr(2, 9);
         this.name = name;
         this.todos = [];
     }

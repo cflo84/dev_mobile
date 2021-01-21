@@ -1,9 +1,37 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>list-details</ion-title>
-  </ion-toolbar>
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>
+            {{ list?.name }}
+        </ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content>
+    <ion-list>
+        <ion-item-sliding *ngFor="let todo of list?.todos">
+            <ion-item color="{{todo?.isDone ? 'light' : ''}}">
+                <ion-label>
+                    <h2>{{todo?.name}}</h2>
+                    <ion-label class="ion-text-wrap">
+                        <p *ngIf='todo?.description !== null && todo?.description !== ""'>
+                            {{ todo.description }}
+                        </p>
+                    </ion-label>
+                </ion-label>
+                <ion-toggle (ionChange)="toggleIsDone(todo)" checked="{{ todo?.isDone }}"></ion-toggle>
+            </ion-item>
 
+            <ion-item-options side="end">
+                <ion-item-option (click)="delete(todo)" color="danger">
+                    <h2><ion-icon name="trash-outline"></ion-icon></h2>
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
 </ion-content>
+
+
+
+<ion-footer>
+    <ion-button expand="block" (click)="presentModal()">Add a new todo</ion-button>
+</ion-footer>
