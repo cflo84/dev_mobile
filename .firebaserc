@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "dev-mobile-c23db": {
+      "hosting": {
+        "app": [
+          "dev-mobile-c23db"
+        ]
+      }
+    }
+  }
+}
