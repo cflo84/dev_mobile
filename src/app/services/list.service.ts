@@ -22,15 +22,23 @@ export class ListService {
     this.lists[0].todos.push(new Todo("AnotherOne", "another one !"));
   }
 
-  getOne (id : string): List {
-    return this.lists.find((list) => list.id === id);
+  getOne (id: string): List {
+    return this.lists.find(list => list.id === id);
   }
 
-  getAll() : List[] {
+  getAll(): List[] {
     return this.lists;
   }
 
-  add(list : List) : void {
+  add(list: List): void {
     this.lists.push(list);
+  }
+
+  addTodo (todo: Todo, list: List): void {
+    list.todos.push(todo);
+  }
+
+  delete(list: List): void {
+    this.lists.splice(this.lists.indexOf(list), 1);
   }
 }

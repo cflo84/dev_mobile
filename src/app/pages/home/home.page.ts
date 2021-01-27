@@ -38,6 +38,6 @@ export class HomePage {
   }
 
   delete(list: List) {
-    
+    this.listService.delete(list);
   }
 }

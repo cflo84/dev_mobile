@@ -31,7 +31,7 @@ export class CreateTodoComponent implements OnInit {
 
     save() {
         let formValue = this.todoForm.value;
-        this.list.todos.push(new Todo(formValue.name, formValue.description));
+        this.listService.addTodo(new Todo(formValue.name, formValue.description), this.list);
         this.modalController.dismiss();
     }
 }

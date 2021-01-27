@@ -11,7 +11,18 @@
     <ion-item>
       <ion-label position="floating">Name</ion-label>
       <ion-input formControlName="name" required></ion-input>
+      <ion-text color="danger"
+                *ngIf="todoForm.controls.name.touched &&
+                       todoForm.controls.name.errors?.required">
+        This field is required
+      </ion-text>
+      <ion-text color="danger"
+                *ngIf="todoForm.controls.name.touched &&
+                       todoForm.controls.name.errors?.minlength">
+        Min length 3
+      </ion-text>
     </ion-item>
+
 
     <ion-item>
       <ion-label position="floating">Description</ion-label>
