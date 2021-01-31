@@ -41,4 +41,8 @@ export class ListService {
   delete(list: List): void {
     this.lists.splice(this.lists.indexOf(list), 1);
   }
+
+  deleteTodo(list: List, todo: Todo): void {
+    list.todos.splice(list.todos.indexOf(todo), 1);
+  }
 }

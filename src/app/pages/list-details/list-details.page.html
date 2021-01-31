@@ -10,12 +10,11 @@
     <ion-list>
         <ion-item-sliding *ngFor="let todo of list?.todos">
             <ion-item color="{{todo?.isDone ? 'light' : ''}}">
-                <ion-label>
+                <ion-label color="{{todo?.isDone ? 'medium' : ''}}">
                     <h2>{{todo?.name}}</h2>
-                    <ion-label class="ion-text-wrap">
-                        <p *ngIf='todo?.description !== null && todo?.description !== ""'>
-                            {{ todo.description }}
-                        </p>
+                    <ion-label class="ion-text-wrap"
+                               *ngIf='todo?.description !== null && todo?.description !== ""'>
+                        {{ todo.description }}
                     </ion-label>
                 </ion-label>
                 <ion-toggle (ionChange)="toggleIsDone(todo)" checked="{{ todo?.isDone }}"></ion-toggle>
