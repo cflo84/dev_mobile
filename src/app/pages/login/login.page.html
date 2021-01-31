@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Login
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="loginForm" (submit)="submit()">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input formControlName="email" required></ion-input>
+      <ion-text color="danger"
+                *ngIf="loginForm.controls.email.touched &&
+                       loginForm.controls.email.errors?.required">
+        This field is required
+      </ion-text>
+      <ion-text color="danger"
+                *ngIf="loginForm.controls.email.touched &&
+                       loginForm.controls.email.errors?.email">
+        The email is not valid
+      </ion-text>
+    </ion-item>
+
+
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input formControlName="password" required></ion-input>
+      <ion-text color="danger"
+                *ngIf="loginForm.controls.password.touched &&
+                       loginForm.controls.password.errors?.required">
+        This field is required
+      </ion-text>
+      <ion-text color="danger"
+                *ngIf="loginForm.controls.password.touched &&
+                       loginForm.controls.password.errors?.minlength">
+        Min length 3
+      </ion-text>
+    </ion-item>
+
+    <ion-button type="submit" expand="block" [disabled]="!loginForm.valid">Submit</ion-button>
+  </form>
+</ion-content>
