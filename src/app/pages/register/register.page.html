@@ -1,0 +1,106 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>
+            Register
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content *ngIf="!verificationEmailSent">
+    <form [formGroup]="registerForm" (submit)="submit()" appEmailsShouldMatch appPasswordsShouldMatch>
+        <ion-item>
+            <ion-label position="floating">Email</ion-label>
+            <ion-input formControlName="email" required></ion-input>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.email.touched &&
+                       registerForm.controls.email.errors?.required">
+                This field is required
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.email.touched &&
+                       registerForm.controls.email.errors?.email">
+                The email is not valid
+            </ion-text>
+        </ion-item>
+
+        <ion-item>
+            <ion-label position="floating">Confirm email</ion-label>
+            <ion-input formControlName="confirmEmail" required></ion-input>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmEmail.touched &&
+                       registerForm.controls.confirmEmail.errors?.required">
+                This field is required
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmEmail.touched &&
+                       registerForm.controls.confirmEmail.errors?.email">
+                The email is not valid
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmEmail.touched &&
+                       registerForm.errors?.emailsDontMatch">
+                Emails don't match
+            </ion-text>
+        </ion-item>
+
+
+        <ion-item>
+            <ion-label position="floating">Password</ion-label>
+            <ion-input type="password" formControlName="password" required></ion-input>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.password.touched &&
+                       registerForm.controls.password.errors?.required">
+                This field is required
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.password.touched &&
+                       registerForm.controls.password.errors?.minlength">
+                Min length 6
+            </ion-text>
+        </ion-item>
+        <ion-item>
+            <ion-label position="floating">Confirm Password</ion-label>
+            <ion-input type="password" formControlName="confirmPassword" required></ion-input>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmPassword.touched &&
+                       registerForm.controls.confirmPassword.errors?.required">
+                This field is required
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmPassword.touched &&
+                       registerForm.controls.confirmPassword.errors?.minlength">
+                Min length 6
+            </ion-text>
+            <ion-text color="danger"
+                      *ngIf="registerForm.controls.confirmPassword.touched &&
+                       registerForm.errors?.passwordsDontMatch">
+                Passwords don't match
+            </ion-text>
+        </ion-item>
+
+        <ion-item>
+            <ion-text color="danger" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </ion-text>
+        </ion-item>
+
+        <ion-button type="submit" expand="block" [disabled]="!registerForm.valid">Submit</ion-button>
+    </form>
+</ion-content>
+
+
+<ion-content *ngIf="verificationEmailSent">
+    <ion-card>
+        <ion-card-header>
+            <ion-card-title>Success !</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+            A verification email has been sent. Check your inbox.
+        </ion-card-content>
+        <ion-card-content>
+            <a [routerLink]="['/login']" [queryParams]="{replaceUrl: true}">Login</a>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

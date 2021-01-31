@@ -25,7 +25,11 @@ const routes: Routes = [
     path: 'list-details',
     loadChildren: () => import('./pages/list-details/list-details.module').then( m => m.ListDetailsPageModule),
     ...canActivate(redirectUnauthorizedToLogin)
+  },  {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
   }
+
 
 ];
 

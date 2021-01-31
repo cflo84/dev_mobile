@@ -30,7 +30,12 @@ export class LoginPage implements OnInit {
         this.auth.signInWithEmailAndPassword(formValue.email, formValue.password)
             .then(
                 user => {
-                    this.router.navigateByUrl('/home', { replaceUrl: true });
+                    if (user.user.emailVerified) {
+                        this.router.navigateByUrl('/home', { replaceUrl: true });
+                    }
+                    else {
+                        this.errorMessage = "Email has not been verified. Please check your inbox."
+                    }
                 },
                 err => {
                     switch (err.code) {
