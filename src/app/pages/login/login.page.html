@@ -39,7 +39,7 @@
             </ion-text>
         </ion-item>
 
-        <ion-item>
+        <ion-item lines='{{errorMessage ? "full" : "none"}}'>
             <ion-text color="danger" *ngIf="errorMessage">
                 {{ errorMessage }}
             </ion-text>

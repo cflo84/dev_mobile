@@ -16,7 +16,7 @@ export class LoginPage implements OnInit {
     });
     errorMessage: String;
 
-    constructor(private fb: FormBuilder, public auth: AngularFireAuth, private router: Router) {
+    constructor(private fb: FormBuilder, private auth: AngularFireAuth, private router: Router) {
     }
 
     ngOnInit() {
@@ -36,7 +36,9 @@ export class LoginPage implements OnInit {
                     else {
                         this.errorMessage = "Email has not been verified. Please check your inbox."
                     }
-                },
+                }
+            )
+            .catch(
                 err => {
                     switch (err.code) {
                         case "auth/invalid-email":
