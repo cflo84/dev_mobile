@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ReactiveFormsModule, FormBuilder, Validators} from "@angular/forms";
-import {AngularFireAuth} from "@angular/fire/auth";
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,33 +14,20 @@ export class ForgotPasswordPage implements OnInit {
   errorMessage: String;
   resetPasswordEmailSent: boolean;
 
-  constructor(private fb: FormBuilder, private auth: AngularFireAuth) {
+  constructor(private fb: FormBuilder, private auth: AuthService) {
   }
 
   ngOnInit() {
+    this.errorMessage = null;
     this.resetPasswordEmailSent = false;
   }
 
   submit() {
     this.errorMessage = null;
 
-    this.auth.sendPasswordResetEmail(this.passwordRecoveryForm.value.email)
-      .then(() => {
-        this.resetPasswordEmailSent = true;
-      })
-      .catch(err => {
-        switch (err.code) {
-            case "auth/invalid-email":
-                this.errorMessage = "Email is invalid";
-                break;
-            case "auth/user-not-found":
-                this.errorMessage = "User not found";
-                break;
-            default:
-                this.errorMessage = "An error has occurred";
-                break;
-        }
-      });
+    this.auth.resetPassword(this.passwordRecoveryForm.value.email)
+      .then(() => this.resetPasswordEmailSent = true)
+      .catch(err => this.errorMessage = err);
   }
   
 
