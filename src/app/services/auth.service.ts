@@ -78,7 +78,7 @@ export class AuthService {
   }
 
   resetPassword (email: string): Promise<void> {
-      return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       this.auth.sendPasswordResetEmail(email)
         .then(resolve)
         .catch(err => {

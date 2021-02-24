@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "myApp",
+  "appId": "io.cappasaulle.lists",
+  "appName": "lists",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
