@@ -1,12 +1,23 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
+import firebase from 'firebase';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private auth: AngularFireAuth) { }
+  private _user: firebase.User;
 
+  constructor(private auth: AngularFireAuth) { 
+    this.auth.authState.subscribe(user => {
+      this._user = user;
+    });
+  }
+
+
+  get user(): firebase.User {
+    return this._user;
+  }
 
   /**
    * 
@@ -14,10 +25,18 @@ export class AuthService {
    * @param password 
    * @returns Promise<firebase.User>
    */
-  login(email: string, password: string): Promise<any> {
+  login(email: string, password: string): Promise<firebase.User> {
     return new Promise((resolve, reject) => {
       this.auth.signInWithEmailAndPassword(email, password)
-        .then(user => resolve(user.user))
+        .then(user => {
+          if (user.user.emailVerified) {
+            resolve(user.user)
+          }
+          else {
+            this.auth.signOut();
+            reject("Email has not been verified. Please check your inbox.");
+          }
+        })
         .catch(err => {
           let errorMessage: String;
 
@@ -50,7 +69,9 @@ export class AuthService {
               .then(() => {
                 // Verification email sent
                 // Sign out and tell the user to verify their email
-                this.auth.signOut().then(() => resolve(null));
+                this.auth.signOut()
+                  .then(resolve)
+                  .catch(reject);
               })
               .catch(error => {
                 // Error occurred. Inspect error code.
@@ -100,4 +121,6 @@ export class AuthService {
         });
       });
   }
+
+
 }

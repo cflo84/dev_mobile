@@ -28,16 +28,9 @@ export class LoginPage implements OnInit {
 
         let formValue = this.loginForm.value;
         this.auth.login(formValue.email, formValue.password)
-            .then(
-                user => {
-                    if (user.emailVerified) {
-                        this.router.navigateByUrl('/home', { replaceUrl: true });
-                    }
-                    else {
-                        this.errorMessage = "Email has not been verified. Please check your inbox."
-                    }
-                }
-            )
+            .then(() => {
+                this.router.navigateByUrl('/home', { replaceUrl: true });
+            })
             .catch(err => this.errorMessage = err);
     }
 }
