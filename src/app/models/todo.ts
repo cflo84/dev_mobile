@@ -1,4 +1,4 @@
-import { DocumentData } from "@angular/fire/firestore";
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "@angular/fire/firestore";
 
 export class Todo {
     id: string;
@@ -21,13 +21,13 @@ export const todoConverter = {
             isDone: todo.isDone
         };
     },
-    fromFirestore: null
-    /*fromFirestore(
-        snapshot: QueryDocumentSnapshot<List>,
+    fromFirestore(
+        snapshot: QueryDocumentSnapshot<Todo>,
         options: SnapshotOptions
-    ): List {
+    ): Todo {
         const data = snapshot.data(options)!;
-        
-        return data;
-    }*/
+        const id = snapshot.id;
+      
+        return {id, ...data};
+    }
 };

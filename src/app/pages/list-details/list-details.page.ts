@@ -52,7 +52,8 @@ export class ListDetailsPage implements OnInit {
         this.listService.deleteTodo(list, todo);
     }
 
-    toggleIsDone (todo: Todo) {
+    toggleIsDone (list: List, todo: Todo) {
         todo.isDone = !todo.isDone;
+        this.listService.updateTodo(list, todo);
     }
 }

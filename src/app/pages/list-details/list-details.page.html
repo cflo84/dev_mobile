@@ -18,7 +18,7 @@
                             {{ todo.description }}
                         </ion-label>
                     </ion-label>
-                    <ion-toggle (ionChange)="toggleIsDone(todo)" checked="{{ todo?.isDone }}"></ion-toggle>
+                    <ion-toggle (ionChange)="toggleIsDone(list, todo)" checked="{{ todo?.isDone }}"></ion-toggle>
                 </ion-item>
 
                 <ion-item-options side="end">
