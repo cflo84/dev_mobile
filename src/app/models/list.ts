@@ -1,13 +1,34 @@
-import { Todo } from "./todo";
+import { DocumentData, QueryDocumentSnapshot, SnapshotOptions } from "@angular/fire/firestore";
+import { Todo, todoConverter } from "./todo";
 
 export class List {
     id: string;
     name: string;
+    owner: string;
     todos: Todo[];
 
     constructor(name: string) {
-        this.id = "_" + Math.random().toString().substr(2, 9);
         this.name = name;
         this.todos = [];
     }
 }
+
+
+export const listConverter = {
+    toFirestore(list: List): DocumentData {
+        return {
+            name: list.name,
+            owner: list.owner,
+            todos: list.todos
+        };
+    },
+    fromFirestore: null
+    /*fromFirestore(
+        snapshot: QueryDocumentSnapshot<List>,
+        options: SnapshotOptions
+    ): List {
+        const data = snapshot.data(options)!;
+        
+        return data;
+    }*/
+};

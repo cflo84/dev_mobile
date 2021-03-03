@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
-import { List } from '../models/list';
-import {Todo} from "../models/todo";
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { List, listConverter } from '../models/list';
+import {Todo, todoConverter} from "../models/todo";
+import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
+import { AuthService } from './auth.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListService {
   private readonly lists: List[];
+  private listsCollection: AngularFirestoreCollection<List>;
 
-  constructor() {
+  constructor(private afs: AngularFirestore, private auth: AuthService) {
+    this.listsCollection = afs.collection<List>('lists');
+    
     this.lists = [];
     this.lists.push(new List("List1"));
     this.lists.push(new List("List2"));
@@ -22,27 +30,70 @@ export class ListService {
     this.lists[0].todos.push(new Todo("AnotherOne", "another one !"));
   }
 
-  getOne (id: string): List {
-    return this.lists.find(list => list.id === id);
+  getOne (id: string): Observable<List> {
+    return this.afs.doc("lists/" + id).get().pipe(
+      map(snapshot => ({id: snapshot.id, ...snapshot.data() as List} as List))
+    );
   }
 
-  getAll(): List[] {
-    return this.lists;
+  getAll(): Observable<List[]> {
+    return this.auth.authState.pipe(
+      switchMap(user => this.afs.collection("lists", ref => ref.where("owner", "==", user.uid)).snapshotChanges()),
+      map(actions => this.convertSnapshotData<List>(actions)),
+      tap(val => {console.log(val)})
+    );
   }
 
-  add(list: List): void {
-    this.lists.push(list);
+  async add (list: List): Promise<DocumentReference<List>> {
+    list.owner = this.auth.user.uid;
+
+    const listref = await this.listsCollection.ref.withConverter(listConverter).add(list);
+    list.id = listref.id;
+
+    return listref;
   }
 
-  addTodo (todo: Todo, list: List): void {
-    list.todos.push(todo);
+  update(list: List): Promise<void> {
+    return this.listsCollection.doc(list.id).ref.withConverter(listConverter).update(list);
   }
 
-  delete(list: List): void {
-    this.lists.splice(this.lists.indexOf(list), 1);
+  delete(list: List): Promise<void> {
+    // TODO : delete les TODO aussi
+    return this.listsCollection.doc(list.id).delete();
   }
+
+  async addTodo (todo: Todo, list: List): Promise<DocumentReference<Todo>> {
+    let todoref = null;
+
+    try {
+      todoref = await this.listsCollection.doc(list.id).collection<Todo>("todos").add(todo);
+      list.todos.push(todo);
+      await this.update(list);
+      
+      todo.id = todoref.id;
+
+      return todoref;
+    }
+    catch (error) {
+      if (todoref != null) {
+        //this.todosCollection.doc(todoref.id).delete();
+        list.todos.pop();
+      }
+      return Promise.reject(error);
+    }
+  }
+
 
   deleteTodo(list: List, todo: Todo): void {
-    list.todos.splice(list.todos.indexOf(todo), 1);
+    //list.todos.splice(list.todos.indexOf(todo), 1);
+  }
+
+  convertSnapshotData<T> (actions: any): List[] {
+    return actions.map(action => {
+      const id = action.payload.doc.id;
+      const data = action.payload.doc.data();
+      
+      return {id, ...data} as T;
+    });
   }
 }

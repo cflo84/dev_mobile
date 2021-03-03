@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
 import { ListService } from '../../services/list.service';
@@ -10,14 +11,14 @@ import { ListService } from '../../services/list.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  lists: List[];
+  lists$: Observable<List[]>;
   modalOpened: boolean; // Disable the possibility to open multiple modals
 
   constructor(private listService: ListService,
               private modalController: ModalController) { }
 
   ngOnInit() {
-    this.lists = this.listService.getAll();
+    this.lists$ = this.listService.getAll();
     this.modalOpened = false;
   }
 

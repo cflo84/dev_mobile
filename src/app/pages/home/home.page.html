@@ -8,7 +8,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let list of lists">
+    <ion-item-sliding *ngFor="let list of lists$ | async">
       <ion-item [routerLink]="['/list-details', list?.id]" detail="true">
         <ion-label>
           <h2>{{list?.name}}</h2>

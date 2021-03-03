@@ -5,6 +5,8 @@ import {List} from "../../models/list";
 import {Todo} from "../../models/todo";
 import {ModalController} from "@ionic/angular";
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-list-details',
@@ -13,7 +15,7 @@ import {CreateTodoComponent} from "../../modals/create-todo/create-todo.componen
 })
 export class ListDetailsPage implements OnInit {
     listId: string;
-    list: List;
+    list$: Observable<List>;
     modalOpened: boolean; // Disable the possibility to open multiple modals
 
     constructor(private listService: ListService,
@@ -23,11 +25,11 @@ export class ListDetailsPage implements OnInit {
 
     ngOnInit() {
         this.listId = this.route.snapshot.paramMap.get('id');
-        this.list = this.listService.getOne(this.listId);
+        this.list$ = this.listService.getOne(this.listId);
         this.modalOpened = false;
     }
 
-    async presentModal() {
+    async presentModal(list: List) {
         if (this.modalOpened) return;
         this.modalOpened = true;
 
@@ -35,7 +37,7 @@ export class ListDetailsPage implements OnInit {
             component: CreateTodoComponent,
             cssClass: 'my-custom-class',
             componentProps: {
-                list: this.list
+                list: list
             }
         });
 
@@ -46,8 +48,8 @@ export class ListDetailsPage implements OnInit {
         return await modal.present();
     }
 
-    delete(todo: Todo) {
-        this.listService.deleteTodo(this.list, todo);
+    delete(list: List, todo: Todo) {
+        this.listService.deleteTodo(list, todo);
     }
 
     toggleIsDone (todo: Todo) {
