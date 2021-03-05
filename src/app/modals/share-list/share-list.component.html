@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Share List
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="shareForm" (submit)="save()">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input formControlName="email" required></ion-input>
+      <ion-text color="danger"
+                *ngIf="shareForm.controls.email.touched &&
+                       shareForm.controls.email.errors?.required">
+        This field is required
+      </ion-text>
+      <ion-text color="danger"
+                *ngIf="shareForm.controls.email.touched &&
+                       shareForm.controls.email.errors?.email">
+        The email is not valid
+      </ion-text>
+    </ion-item>
+
+    <ion-button type="submit" expand="block" [disabled]="!shareForm.valid">Partager</ion-button>
+  </form>
+</ion-content>

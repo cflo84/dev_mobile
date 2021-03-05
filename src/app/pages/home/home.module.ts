@@ -6,6 +6,7 @@ import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
+import {ShareListComponent} from '../../modals/share-list/share-list.component';
 
 
 @NgModule({
@@ -16,6 +17,6 @@ import { CreateListComponent } from 'src/app/modals/create-list/create-list.comp
     HomePageRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [HomePage, CreateListComponent]
+  declarations: [HomePage, CreateListComponent, ShareListComponent]
 })
 export class HomePageModule {}

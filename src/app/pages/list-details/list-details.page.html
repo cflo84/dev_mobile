@@ -4,6 +4,9 @@
             <ion-title>
                 {{ list?.name }}
             </ion-title>
+            <ion-buttons slot="end">
+                <ion-button (click)="presentShareModal(list)" ><ion-icon name="share-social"></ion-icon></ion-button>
+            </ion-buttons>
         </ion-toolbar>
     </ion-header>
 

@@ -38,14 +38,14 @@ export class ListService {
 
   getAll(): Observable<List[]> {
     return this.auth.authState.pipe(
-      switchMap(user => this.afs.collection("lists", ref => ref.where("owner", "==", user.uid)).snapshotChanges()),
+      switchMap(user => this.afs.collection("lists", ref => ref.where("owners", "array-contains-any", [user.uid, user.email])).snapshotChanges()),
       map(actions => this.convertSnapshotData<List>(actions)),
       tap(val => {console.log(val)})
     );
   }
 
   async add (list: List): Promise<DocumentReference<List>> {
-    list.owner = this.auth.user.uid;
+    list.owners.push(this.auth.user.uid);
 
     const listref = await this.listsCollection.ref.withConverter(listConverter).add(list);
     list.id = listref.id;
@@ -95,5 +95,11 @@ export class ListService {
       
       return {id, ...data} as T;
     });
+  }
+
+  shareList(emailOther: string, list: List) {
+      const userEmail = this.auth.user.email;
+
+      console.log('share ' + list.name + ' to ' + emailOther);
   }
 }

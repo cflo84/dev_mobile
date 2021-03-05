@@ -16,8 +16,11 @@
       </ion-item>
 
       <ion-item-options side="end">
+        <ion-item-option (click)="presentShareModal(list)" color="primary">
+          <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+        </ion-item-option>
         <ion-item-option (click)="delete(list)" color="danger">
-          <h2><ion-icon name="trash-outline"></ion-icon></h2>
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>

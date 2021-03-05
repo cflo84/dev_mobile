@@ -7,6 +7,7 @@ import {ModalController} from "@ionic/angular";
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import {ShareListComponent} from '../../modals/share-list/share-list.component';
 
 @Component({
     selector: 'app-list-details',
@@ -36,6 +37,24 @@ export class ListDetailsPage implements OnInit {
         const modal = await this.modalController.create({
             component: CreateTodoComponent,
             cssClass: 'my-custom-class',
+            componentProps: {
+                list: list
+            }
+        });
+
+        modal.onDidDismiss().then(() => {
+            this.modalOpened = false;
+        })
+
+        return await modal.present();
+    }
+
+    async presentShareModal(list: List) {
+        if (this.modalOpened) return;
+        this.modalOpened = true;
+
+        const modal = await this.modalController.create({
+            component: ShareListComponent,
             componentProps: {
                 list: list
             }
