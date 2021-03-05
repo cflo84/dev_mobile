@@ -9,6 +9,7 @@ export class List {
 
     constructor(name: string) {
         this.name = name;
+        this.owners = [];
         this.todos = [];
     }
 }
@@ -22,13 +23,13 @@ export const listConverter = {
             todos: list.todos
         };
     },
-    fromFirestore: null
-    /*fromFirestore(
+    fromFirestore(
         snapshot: QueryDocumentSnapshot<List>,
         options: SnapshotOptions
     ): List {
         const data = snapshot.data(options)!;
-        
-        return data;
-    }*/
+        const id = snapshot.id;
+
+        return {id, ...data};
+    }
 };

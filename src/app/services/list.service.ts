@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { List, listConverter } from '../models/list';
 import {Todo, todoConverter} from "../models/todo";
-import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentReference } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 
 
@@ -32,7 +32,12 @@ export class ListService {
 
   getOne (id: string): Observable<List> {
     return this.afs.doc("lists/" + id).get().pipe(
-      map(snapshot => ({id: snapshot.id, ...snapshot.data() as List} as List))
+      map(snapshot => {
+        const list: List = {id: snapshot.id, ...snapshot.data() as List};
+        this.getAllTodos(list).subscribe(todos => list.todos = todos);
+
+        return list;
+      })
     );
   }
 
@@ -40,7 +45,11 @@ export class ListService {
     return this.auth.authState.pipe(
       switchMap(user => this.afs.collection("lists", ref => ref.where("owners", "array-contains-any", [user.uid, user.email])).snapshotChanges()),
       map(actions => this.convertSnapshotData<List>(actions)),
-      tap(val => {console.log(val)})
+      map(actions => actions.map(list => {
+        // Assigne les todos
+        this.getAllTodos(list).subscribe(todos => list.todos = todos);
+        return list;
+      }))
     );
   }
 
@@ -54,41 +63,54 @@ export class ListService {
   }
 
   update(list: List): Promise<void> {
-    return this.listsCollection.doc(list.id).ref.withConverter(listConverter).update(list);
+    return this.listsCollection.doc(list.id).ref.withConverter(listConverter).set(list);
   }
 
   delete(list: List): Promise<void> {
-    // TODO : delete les TODO aussi
     return this.listsCollection.doc(list.id).delete();
   }
 
-  async addTodo (todo: Todo, list: List): Promise<DocumentReference<Todo>> {
-    let todoref = null;
+  
 
-    try {
-      todoref = await this.listsCollection.doc(list.id).collection<Todo>("todos").add(todo);
-      list.todos.push(todo);
-      await this.update(list);
-      
-      todo.id = todoref.id;
 
-      return todoref;
-    }
-    catch (error) {
-      if (todoref != null) {
-        //this.todosCollection.doc(todoref.id).delete();
-        list.todos.pop();
-      }
-      return Promise.reject(error);
-    }
+
+
+
+  private getTodoRef(list: List): CollectionReference<Todo> {
+    return this.listsCollection.doc(list.id).collection<Todo>("todos").ref.withConverter(todoConverter);
+  }
+
+  getAllTodos (list: List): Observable<Todo[]> {
+    return this.listsCollection.doc(list.id).collection<Todo>("todos").snapshotChanges().pipe(
+      map(actions => this.convertSnapshotData<Todo>(actions))
+    );
+  }
+
+  async addTodo (list: List, todo: Todo): Promise<DocumentReference<Todo>> {
+    const todoref = await this.getTodoRef(list).add(todo);
+    todo.id = todoref.id;
+    list.todos.push(todo);
+    
+    return todoref;
+  }
+
+  async deleteTodo(list: List, todo: Todo): Promise<void> {
+    await this.getTodoRef(list).doc(todo.id).delete();
+
+    // Delete the todo in the list
+    list.todos = list.todos.filter(_todo => _todo.id != todo.id);
   }
 
 
-  deleteTodo(list: List, todo: Todo): void {
-    //list.todos.splice(list.todos.indexOf(todo), 1);
+  updateTodo(list: List, todo: Todo): Promise<void> {
+    return this.getTodoRef(list).doc(todo.id).update(todo);
   }
 
-  convertSnapshotData<T> (actions: any): List[] {
+
+
+  
+
+  private convertSnapshotData<T> (actions: any): T[] {
     return actions.map(action => {
       const id = action.payload.doc.id;
       const data = action.payload.doc.data();
@@ -97,9 +119,9 @@ export class ListService {
     });
   }
 
-  shareList(emailOther: string, list: List) {
-      const userEmail = this.auth.user.email;
-
-      console.log('share ' + list.name + ' to ' + emailOther);
+  shareList(email: string, list: List) {
+      //const userEmail = this.auth.user.email;
+      list.owners.push(email);
+      this.update(list);
   }
 }
