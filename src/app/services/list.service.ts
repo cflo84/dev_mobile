@@ -119,9 +119,13 @@ export class ListService {
     });
   }
 
-  shareList(email: string, list: List) {
-      //const userEmail = this.auth.user.email;
-      list.owners.push(email);
+  shareList(emails: string[], list: List) {
+      const userEmail = this.auth.user.email;
+      emails.forEach(e => {
+        if(list.owners.indexOf(e) === -1 && e !== userEmail){
+          list.owners.push(e);
+        }
+      })
       this.update(list);
   }
 }

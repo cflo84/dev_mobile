@@ -9,8 +9,14 @@
 <ion-content>
   <form [formGroup]="shareForm" (submit)="save()">
     <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input formControlName="email" required></ion-input>
+      <ion-buttons slot="end" >
+        <ion-button [disabled]="!shareForm.valid" (click)="addEmail()">
+          <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+
+      <ion-label><ion-icon name="mail-outline"></ion-icon></ion-label>
+      <ion-input name="email" formControlName="email" placeholder="email@exemple.com" required></ion-input>
       <ion-text color="danger"
                 *ngIf="shareForm.controls.email.touched &&
                        shareForm.controls.email.errors?.required">
@@ -22,7 +28,11 @@
         The email is not valid
       </ion-text>
     </ion-item>
+    <ion-chip *ngFor="let email of emails">
+      <ion-label>{{email}}</ion-label>
+      <ion-icon name="close-outline" (click)="removeEmail(email)"></ion-icon>
+    </ion-chip>
 
-    <ion-button type="submit" expand="block" [disabled]="!shareForm.valid">Partager</ion-button>
+    <ion-button type="submit" expand="block" [disabled]="isDisable()">Partager</ion-button>
   </form>
 </ion-content>
