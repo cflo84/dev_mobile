@@ -4,12 +4,11 @@ import { Todo, todoConverter } from "./todo";
 export class List {
     id: string;
     name: string;
-    owners: string[];
+    owner: string;
     todos: Todo[];
 
     constructor(name: string) {
         this.name = name;
-        this.owners = [];
         this.todos = [];
     }
 }
@@ -19,7 +18,7 @@ export const listConverter = {
     toFirestore(list: List): DocumentData {
         return {
             name: list.name,
-            owners: list.owners,
+            owner: list.owner,
             todos: list.todos
         };
     },

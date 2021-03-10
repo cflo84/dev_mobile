@@ -43,7 +43,7 @@ export class ListService {
 
   getAll(): Observable<List[]> {
     return this.auth.authState.pipe(
-      switchMap(user => this.afs.collection("lists", ref => ref.where("owners", "array-contains-any", [user.uid, user.email])).snapshotChanges()),
+      switchMap(user => this.afs.collection("lists", ref => ref.where("owner", "==", user.email)).snapshotChanges()),
       map(actions => this.convertSnapshotData<List>(actions)),
       map(actions => actions.map(list => {
         // Assigne les todos
@@ -54,7 +54,7 @@ export class ListService {
   }
 
   async add (list: List): Promise<DocumentReference<List>> {
-    list.owners.push(this.auth.user.uid);
+    list.owner = this.auth.user.email;
 
     const listref = await this.listsCollection.ref.withConverter(listConverter).add(list);
     list.id = listref.id;
