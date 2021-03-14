@@ -6,6 +6,7 @@ import { List } from '../../models/list';
 import { ListService } from '../../services/list.service';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
 import {map} from 'rxjs/operators';
+import { ListBinService } from '../../services/list-bin.service';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class HomePage implements OnInit{
   private isDisabled: boolean;
 
   constructor(private listService: ListService,
+              private listBinService: ListBinService,
               private modalController: ModalController) { }
 
   ngOnInit() {
@@ -62,8 +64,8 @@ export class HomePage implements OnInit{
     return await modal.present();
   }
 
-  delete(list: List) {
-    this.listService.delete(list);
+  moveToBin(list: List) {
+    this.listBinService.moveToBin(list);
   }
 
   onRenderItems(event) {

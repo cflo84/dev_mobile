@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
         let formValue = this.loginForm.value;
         this.auth.login(formValue.email, formValue.password)
             .then(() => {
-                this.router.navigateByUrl('/home', { replaceUrl: true });
+                this.router.navigateByUrl('/', { replaceUrl: true });
             })
             .catch(err => this.errorMessage = err);
     }

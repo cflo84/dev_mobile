@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>
+            Bin
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content *ngIf="trashedLists$ | async as trashedLists">
+    <ion-list>
+        <ion-item *ngFor="let trashedList of trashedLists">
+            <ion-label>{{ trashedList?.name }}</ion-label>
+
+            <ion-buttons slot="end">
+                <ion-button color="primary" (click)="restoreFromBin(trashedList)">
+                    <ion-icon name="reload-outline"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+            <ion-buttons slot="end">
+                <ion-button color="danger" (click)="delete(trashedList)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-item>
+
+        <ion-item *ngIf="trashedLists.length === 0">
+            Nothing there !
+        </ion-item>
+    </ion-list>
+</ion-content>

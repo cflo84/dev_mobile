@@ -2,14 +2,14 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {canActivate, emailVerified, redirectLoggedInTo, redirectUnauthorizedTo} from "@angular/fire/auth-guard";
 
-const redirectLoggedInToHome = () => redirectLoggedInTo(['home']);
+const redirectLoggedInToHome = () => redirectLoggedInTo(['']);
 const redirectUnauthorizedToLogin = () => emailVerified && redirectUnauthorizedTo(['login']);
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'login',
@@ -28,16 +28,22 @@ const routes: Routes = [
   },
 
   
-  {
+ /* {
     path: 'home',
     loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLogin)
-  },
+  },*/
   {
     path: 'list-details',
     loadChildren: () => import('./pages/list-details/list-details.module').then( m => m.ListDetailsPageModule),
     ...canActivate(redirectUnauthorizedToLogin)
-  }
+  },
+  {
+    path: 'bin',
+    loadChildren: () => import('./pages/bin/bin.module').then( m => m.BinPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+
 
 
 ];

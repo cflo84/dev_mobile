@@ -6,6 +6,7 @@ export class List {
     name: string;
     owner: string;
     todos: Todo[];
+    trashed: boolean;
 
     constructor(name: string) {
         this.name = name;
@@ -19,7 +20,7 @@ export const listConverter = {
         return {
             name: list.name,
             owner: list.owner,
-            todos: list.todos
+            trashed: list.trashed || false
         };
     },
     fromFirestore(
