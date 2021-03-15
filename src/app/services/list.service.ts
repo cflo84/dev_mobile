@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, scan, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { List, listConverter } from '../models/list';
 import { Todo, todoConverter } from "../models/todo";
 import { AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentReference } from '@angular/fire/firestore';
@@ -31,13 +31,17 @@ export class ListService {
   }
 
   getOne(id: string): Observable<List> {
+    let list: List;
+
     return this.afs.doc("lists/" + id).get().pipe(
       map(snapshot => {
-        const list: List = { id: snapshot.id, ...snapshot.data() as List };
-        this.getAllTodos(list).subscribe(todos => list.todos = todos);
-
+        list = { id: snapshot.id, ...snapshot.data() as List };
+        
         return list;
-      })
+      }),
+      switchMap(list => this.getAllTodos(list)),
+      switchMap(todos => list.todos = todos),
+      switchMap(() => of(list))
     );
   }
 
