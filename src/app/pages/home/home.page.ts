@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {IonReorderGroup, ModalController} from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
@@ -16,8 +16,9 @@ import { ListBinService } from '../../services/list-bin.service';
 })
 export class HomePage implements OnInit{
   lists$: Observable<List[]>;
+  lists_search$: Observable<List[]>;
   modalOpened: boolean; // Disable the possibility to open multiple modals
-  private isDisabled: boolean;
+  isDisabled: boolean;
 
   constructor(private listService: ListService,
               private listBinService: ListBinService,
@@ -25,6 +26,7 @@ export class HomePage implements OnInit{
 
   ngOnInit() {
     this.lists$ = this.listService.getAll();
+    this.lists_search$ = this.lists$;
     this.modalOpened = false;
     this.isDisabled = true;
   }
@@ -83,6 +85,16 @@ export class HomePage implements OnInit{
 
   toggleReorderGroup() {
     this.isDisabled = !this.isDisabled;
+  }
+
+  search (event: any) {
+    const text = event.detail.value.toLocaleLowerCase();
+
+    this.lists_search$ = this.lists$.pipe(
+      map(lists => lists.filter(
+        list => list.name.toLocaleLowerCase().includes(text)
+      ))
+    )
   }
 
 }

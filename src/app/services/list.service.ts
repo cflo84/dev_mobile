@@ -31,17 +31,12 @@ export class ListService {
   }
 
   getOne(id: string): Observable<List> {
-    let list: List;
+    // Retrieve the list, then retrieve the todos, build the object list and return it
 
-    return this.afs.doc("lists/" + id).get().pipe(
-      map(snapshot => {
-        list = { id: snapshot.id, ...snapshot.data() as List };
-        
-        return list;
-      }),
-      switchMap(list => this.getAllTodos(list)),
-      switchMap(todos => list.todos = todos),
-      switchMap(() => of(list))
+    return this.listsCollection.doc(id).snapshotChanges().pipe(
+      switchMap(action => this.getAllTodos(id).pipe(
+        map(todos => ({id: id, todos: todos, ...action.payload.data()} as List))
+      ))
     );
   }
 
@@ -89,8 +84,8 @@ export class ListService {
     return this.listsCollection.doc(list.id).collection<Todo>("todos").ref.withConverter(todoConverter);
   }
 
-  getAllTodos(list: List): Observable<Todo[]> {
-    return this.listsCollection.doc(list.id).collection<Todo>("todos").snapshotChanges().pipe(
+  getAllTodos(id: string): Observable<Todo[]> {
+    return this.listsCollection.doc(id).collection<Todo>("todos").snapshotChanges().pipe(
       map(actions => this.convertSnapshotData<Todo>(actions))
     );
   }

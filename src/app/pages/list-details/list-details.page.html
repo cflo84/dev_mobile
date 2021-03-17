@@ -1,41 +1,45 @@
-<ng-container  *ngIf="list$ | async as list">
-    <ion-header [translucent]="true">
-        <ion-toolbar>
-            <ion-title>
-                {{ list?.name }}
-            </ion-title>
-            <ion-buttons slot="end">
-                <ion-button (click)="presentShareModal(list)" ><ion-icon name="share-social"></ion-icon></ion-button>
-            </ion-buttons>
-        </ion-toolbar>
-    </ion-header>
+<ion-header [translucent]="true">
+    <ion-toolbar *ngIf="list$ | async as list">
+        <ion-title>
+            {{ list?.name }}
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="presentShareModal(list)" ><ion-icon name="share-social"></ion-icon></ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
 
-    <ion-content>
-        <ion-list>
-            <ion-item-sliding *ngFor="let todo of list?.todos">
-                <ion-item color="{{todo?.isDone ? 'light' : ''}}">
-                    <ion-label color="{{todo?.isDone ? 'medium' : ''}}">
-                        <h2>{{todo?.name}}</h2>
-                        <ion-label class="ion-text-wrap"
-                                *ngIf='todo?.description !== null && todo?.description !== ""'>
-                            {{ todo.description }}
-                        </ion-label>
+<ion-content>
+    <ion-list *ngIf="list$ | async as list">
+        <ion-item-sliding *ngFor="let todo of list?.todos">
+            <ion-item color="{{todo?.isDone ? 'light' : ''}}">
+                <ion-label color="{{todo?.isDone ? 'medium' : ''}}">
+                    <h2>{{todo?.name}}</h2>
+                    <ion-label class="ion-text-wrap"
+                            *ngIf='todo?.description !== null && todo?.description !== ""'>
+                        {{ todo.description }}
                     </ion-label>
-                    <ion-toggle (ionChange)="toggleIsDone(list, todo)" checked="{{ todo?.isDone }}"></ion-toggle>
-                </ion-item>
+                </ion-label>
+                <ion-toggle (ionChange)="toggleIsDone(list, todo)" checked="{{ todo?.isDone }}"></ion-toggle>
+            </ion-item>
 
-                <ion-item-options side="end">
-                    <ion-item-option (click)="delete(list, todo)" color="danger">
-                        <h2><ion-icon name="trash-outline"></ion-icon></h2>
-                    </ion-item-option>
-                </ion-item-options>
-            </ion-item-sliding>
-        </ion-list>
-    </ion-content>
+            <ion-item-options side="end">
+                <ion-item-option (click)="delete(list, todo)" color="danger">
+                    <h2><ion-icon name="trash-outline"></ion-icon></h2>
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
+        
+        <ion-item-sliding *ngIf="list?.todos.length === 0">
+            <ion-item>
+                Nothing there !
+            </ion-item>
+        </ion-item-sliding>
+    </ion-list>
+</ion-content>
 
 
 
-    <ion-footer>
-        <ion-button expand="block" (click)="presentModal(list)">Add a new todo</ion-button>
-    </ion-footer>
-</ng-container>
+<ion-footer>
+    <ion-button expand="block" (click)="presentModal(list)" *ngIf="list$ | async as list">Add a new todo</ion-button>
+</ion-footer>
