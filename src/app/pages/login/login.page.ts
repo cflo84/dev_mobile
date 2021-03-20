@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ReactiveFormsModule, FormBuilder, Validators} from "@angular/forms";
+import { FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -28,6 +28,16 @@ export class LoginPage implements OnInit {
 
         let formValue = this.loginForm.value;
         this.auth.login(formValue.email, formValue.password)
+            .then(() => {
+                this.router.navigateByUrl('/', { replaceUrl: true });
+            })
+            .catch(err => this.errorMessage = err);
+    }
+
+    loginGoogle() {
+        this.errorMessage = null;
+
+        this.auth.loginGoogle()
             .then(() => {
                 this.router.navigateByUrl('/', { replaceUrl: true });
             })

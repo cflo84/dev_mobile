@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase';
 import { Observable } from 'rxjs';
+import '@codetrix-studio/capacitor-google-auth';
+import {Plugins} from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root'
@@ -128,4 +130,9 @@ export class AuthService {
   }
 
 
+    async loginGoogle() {
+        let googleUser = await Plugins.GoogleAuth.signIn(null) as any;
+        const credential = firebase.auth.GoogleAuthProvider.credential(googleUser.authentication.idToken);
+        await this.auth.signInAndRetrieveDataWithCredential(credential);
+    }
 }
