@@ -7,6 +7,7 @@ import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
+import { SearchPipeModule } from '../../shared/search-pipe.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import {ShareListComponent} from '../../modals/share-list/share-list.component';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SearchPipeModule
   ],
   declarations: [HomePage, CreateListComponent, ShareListComponent]
 })
