@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "291532548979",
+    "project_id": "dev-mobile-c23db",
+    "storage_bucket": "dev-mobile-c23db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291532548979:android:c386a6217e87eec20c7306",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291532548979-hp80sqiaivnghu7aue812u1jvj2ae66q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.ionic.starter",
+            "certificate_hash": "69793e18a7559555872254b94dbc4c326722ec56"
+          }
+        },
+        {
+          "client_id": "291532548979-lc9m8tgmdv232qshgvr2ehktmu8lh6hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8Q0Ah4ut1-qmo5XVlnNEKPvrDnn8vWz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291532548979-lc9m8tgmdv232qshgvr2ehktmu8lh6hm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
