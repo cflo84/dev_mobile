@@ -7,6 +7,7 @@ import { ListService } from '../../services/list.service';
 import { ShareListComponent } from '../../modals/share-list/share-list.component';
 import { map } from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ export class HomePage implements OnInit {
 
   constructor(private listService: ListService,
     private listBinService: ListBinService,
-    private modalController: ModalController) { }
+    private modalController: ModalController,
+    private authService: AuthService) { }
 
   ngOnInit() {
     this.lists$ = this.listService.getAll();
@@ -85,4 +87,7 @@ export class HomePage implements OnInit {
     this.isDisabled = !this.isDisabled;
   }
 
+  logOut() {
+    this.authService.logOut();
+  }
 }

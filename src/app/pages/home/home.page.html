@@ -1,25 +1,60 @@
-
 <ion-header [translucent]="true">
     <ion-toolbar>
         <ion-title>
             Lists
         </ion-title>
-        <ion-buttons slot="primary" type="icon-only" (click)="toggleReorderGroup()">
-            <ion-button>
+        <!--<ion-buttons slot="primary" type="icon-only" (click)="toggleReorderGroup()">
+            
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>-->
+
+
+        <ion-buttons slot="end">
+            <ion-button type="icon-only" (click)="toggleReorderGroup()">
                 <ion-icon *ngIf="isDisabled" name="reorder-two-outline"></ion-icon>
                 <ion-icon *ngIf="!isDisabled" name="checkmark-circle-outline"></ion-icon>
             </ion-button>
+            <ion-menu-button id="home-menu-button"></ion-menu-button>
         </ion-buttons>
-
     </ion-toolbar>
 </ion-header>
+
+<ion-menu side="end" menuId="home-menu" contentId="home-menu-button">
+    <ion-header>
+        <ion-toolbar>
+            <ion-title>Navigate</ion-title>
+        </ion-toolbar>
+    </ion-header>
+    <ion-content>
+        <ion-list>
+            <ion-menu-toggle auto-hide="true">
+                <ion-item [routerLink]="['/bin']">
+                    <ion-button slot="start" expand="block" fill="clear">
+                        <ion-icon name="trash-outline" size="large" style="color: #ed576b"></ion-icon>
+                    </ion-button>
+                    Trash
+                </ion-item>
+            </ion-menu-toggle>
+
+            <ion-menu-toggle auto-hide="true">
+                <ion-item (click)="logOut()">
+                    <ion-button slot="start" expand="block" fill="clear">
+                        <ion-icon name="log-out-outline" size="large"></ion-icon>
+                    </ion-button>
+                    Log out
+                </ion-item>
+            </ion-menu-toggle>
+        </ion-list>
+    </ion-content>
+</ion-menu>
 
 <ion-content>
     <ion-searchbar [(ngModel)]="searchInput"></ion-searchbar>
 
     <ion-list>
-        <ion-reorder-group *ngIf="lists$ | async as lists" (ionItemReorder)="onRenderItems($event)" [disabled]="isDisabled">
-            
+        <ion-reorder-group *ngIf="lists$ | async as lists" (ionItemReorder)="onRenderItems($event)"
+            [disabled]="isDisabled">
+
             <ion-item-sliding *ngFor="let list of lists | search:searchInput">
 
                 <ion-item [routerLink]="['/list-details', list?.id]" detail="true">
@@ -59,16 +94,13 @@
         <ion-grid class="ion-no-padding">
             <ion-row class="ion-text-center">
                 <ion-col>
-                    <ion-button expand="block" fill="clear" (click)="presentModal()">
-                        <ion-icon name="add-outline" size="large" title="Add a new list"></ion-icon>
-                    </ion-button>
                 </ion-col>
                 <ion-col size="6">
                     <h6 *ngIf="lists$ | async as lists">{{ lists.length }} lists</h6>
                 </ion-col>
                 <ion-col>
-                    <ion-button expand="block" fill="clear" [routerLink]="['/bin']" >
-                        <ion-icon name="trash-outline" size="large" style="color: #ed576b"></ion-icon>
+                    <ion-button expand="block" fill="clear" (click)="presentModal()">
+                        <ion-icon name="add-outline" size="large" title="Add a new list"></ion-icon>
                     </ion-button>
                 </ion-col>
             </ion-row>
