@@ -19,7 +19,7 @@
 
         <ion-list>
             <ion-reorder-group (ionItemReorder)="onRenderItems($event)" [disabled]="isDisabled">
-                <ion-item-sliding *ngFor="let list of lists">
+                <ion-item-sliding *ngFor="let list of lists$ | async">
 
                     <ion-item [routerLink]="['/list-details', list?.id]" detail="true">
                         <ion-label>

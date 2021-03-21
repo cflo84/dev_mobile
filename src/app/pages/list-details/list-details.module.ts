@@ -8,6 +8,7 @@ import { ListDetailsPageRoutingModule } from './list-details-routing.module';
 
 import { ListDetailsPage } from './list-details.page';
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
+import { EmailNotRedundantValidatorDirective } from '../../shared/email-not-redundant.directive';
 
 @NgModule({
   imports: [
@@ -17,6 +18,6 @@ import {CreateTodoComponent} from "../../modals/create-todo/create-todo.componen
     ListDetailsPageRoutingModule,
     ReactiveFormsModule
   ],
-  declarations: [ListDetailsPage, CreateTodoComponent]
+  declarations: [ListDetailsPage, CreateTodoComponent, EmailNotRedundantValidatorDirective]
 })
 export class ListDetailsPageModule {}

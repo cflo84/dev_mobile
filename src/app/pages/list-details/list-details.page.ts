@@ -6,8 +6,8 @@ import {Todo} from "../../models/todo";
 import {ModalController} from "@ionic/angular";
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
     selector: 'app-list-details',
@@ -17,16 +17,29 @@ import {ShareListComponent} from '../../modals/share-list/share-list.component';
 export class ListDetailsPage implements OnInit {
     listId: string;
     list$: Observable<List>;
+    access: string;
     modalOpened: boolean; // Disable the possibility to open multiple modals
 
     constructor(private listService: ListService,
                 private modalController: ModalController,
-                private route: ActivatedRoute) {
+                private route: ActivatedRoute,
+                private auth: AuthService) {
     }
 
     ngOnInit() {
         this.listId = this.route.snapshot.paramMap.get('id');
         this.list$ = this.listService.getOne(this.listId);
+        this.list$.subscribe(l => {
+            const email = this.auth.user.email;
+            if(l.owner === email){
+                this.access = 'RW';
+            }
+            else {
+                l.sharers.forEach(s => {
+                    if(s.email === email) this.access = s.rights;
+                }
+            )}
+        });
         this.modalOpened = false;
     }
 
@@ -74,5 +87,9 @@ export class ListDetailsPage implements OnInit {
     toggleIsDone (list: List, todo: Todo) {
         todo.isDone = !todo.isDone;
         this.listService.updateTodo(list, todo);
+    }
+
+    canWrite() {
+        return this.access === 'RW';
     }
 }

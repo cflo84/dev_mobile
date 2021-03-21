@@ -3,36 +3,75 @@
     <ion-title>
       Share List
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form [formGroup]="shareForm" (submit)="save()">
-    <ion-item>
-      <ion-buttons slot="end" >
-        <ion-button [disabled]="!shareForm.valid" (click)="addEmail()">
-          <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+    <ion-item-group>
+      <ion-item lines="none">
+        <ion-avatar slot="start">
+          <img src="./assets/avatar.svg" alt="avatar">
+        </ion-avatar>
+        <ion-label>
+          <h3>
+            {{ list.owner }}
+          </h3>
+          <p>
+            Owner
+          </p>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none" color="{{this.sharer.email === this.valueMail() ? 'secondary' : ''}}" *ngFor="let sharer of sharers">
+        <ion-avatar slot="start">
+          <img src="./assets/avatar.svg" alt="avatar">
+        </ion-avatar>
+        <ion-label>
+          <h3>
+            {{ sharer.email }}
+          </h3>
+          <p *ngIf="sharer.rights === 'RW'">
+            Access read and write
+          </p>
+          <p *ngIf="sharer.rights === 'R'">
+            Access read
+          </p>
+        </ion-label>
+<!--        <ion-label><ion-icon name="mail-outline"></ion-icon><ion-text> {{email}}</ion-text></ion-label>-->
+        <ion-buttons slot="end" *ngIf="canShare()">
+          <ion-button (click)="writeAccess(sharer)">
+            <ion-icon *ngIf="sharer.rights === 'RW'" slot="icon-only" name="pencil"></ion-icon>
+            <ion-icon *ngIf="sharer.rights === 'R'" slot="icon-only" name="pencil-outline"></ion-icon>
+          </ion-button>
+          <ion-button (click)="removeEmail(sharer)" *ngIf="canShare()">
+            <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
 
-      <ion-label><ion-icon name="mail-outline"></ion-icon></ion-label>
-      <ion-input name="email" formControlName="email" placeholder="email@exemple.com" required></ion-input>
-      <ion-text color="danger"
-                *ngIf="shareForm.controls.email.touched &&
-                       shareForm.controls.email.errors?.required">
-        This field is required
-      </ion-text>
-      <ion-text color="danger"
-                *ngIf="shareForm.controls.email.touched &&
-                       shareForm.controls.email.errors?.email">
-        The email is not valid
-      </ion-text>
-    </ion-item>
-    <ion-chip *ngFor="let email of emails">
-      <ion-label>{{email}}</ion-label>
-      <ion-icon name="close-outline" (click)="removeEmail(email)"></ion-icon>
-    </ion-chip>
+      </ion-item>
 
-    <ion-button type="submit" expand="block" [disabled]="isDisable()">Partager</ion-button>
+      <ion-item *ngIf="canShare()">
+        <ion-buttons slot="end" >
+          <ion-button [disabled]="!shareForm.valid" (click)="addEmail()">
+            <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
+        <ion-label><ion-icon name="mail-outline"></ion-icon></ion-label>
+        <ion-input (ionBlur)="clear()" name="email" formControlName="email" placeholder="Add email's collaborator"></ion-input>
+        <ion-text color="danger"
+                  *ngIf="shareForm.controls.email.touched &&
+                         shareForm.controls.email.errors?.email">
+          Email is not valid
+        </ion-text>
+      </ion-item>
+
+    </ion-item-group>
+
+
+    <ion-button *ngIf="canShare()" type="submit" expand="block" [disabled]="isDisable()">Partager</ion-button>
   </form>
 </ion-content>

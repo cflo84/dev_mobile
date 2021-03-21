@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { List, listConverter } from '../models/list';
-import { Todo, todoConverter } from "../models/todo";
-import { AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentReference } from '@angular/fire/firestore';
-import { AuthService } from './auth.service';
+import {Injectable} from '@angular/core';
+import {combineLatest, Observable} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
+import {List, listConverter, Sharer} from '../models/list';
+import {Todo, todoConverter} from '../models/todo';
+import {AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentReference} from '@angular/fire/firestore';
+import {AuthService} from './auth.service';
 
 
 @Injectable({
@@ -41,10 +41,18 @@ export class ListService {
   }
 
   getAll(): Observable<List[]> {
-    return this.auth.authState.pipe(
-      switchMap(user => this.afs.collection("lists", ref => ref.where("owner", "==", user.email).where("trashed", "==", false)).snapshotChanges()),
-      map(actions => this.convertSnapshotData<List>(actions))
-    );
+    return combineLatest(
+         this.auth.authState.pipe(
+            switchMap(user => this.afs.collection("lists", ref => ref.where("owner", "==", user.email).where("trashed", "==", false)).snapshotChanges()),
+            map(actions => this.convertSnapshotData<List>(actions))
+        ),
+        this.auth.authState.pipe(
+            switchMap(user => this.afs.collection("lists", ref => ref.where("sharers", "array-contains-any", [{email: user.email, rights: "RW"}, {email: user.email, rights: "R"}])).snapshotChanges()),
+            map(actions => this.convertSnapshotData<List>(actions))
+        )).pipe(map((x) =>{
+      return x[0].concat(x[1]);
+    }));
+
   }
 
   async add(list: List): Promise<DocumentReference<List>> {
@@ -123,13 +131,12 @@ export class ListService {
     });
   }
 
-  shareList(emails: string[], list: List) {
-    /*const userEmail = this.auth.user.email;
-    emails.forEach(e => {
-      if (list.owners.indexOf(e) === -1 && e !== userEmail) {
-        list.owners.push(e);
-      }
-    })
-    this.update(list);*/
+  shareList(sharers: Sharer[], list: List) {
+    const userEmail = this.auth.user.email;
+    list.sharers = sharers;
+    /*sharers.forEach(e => {
+      list.sharers.push({email: e, rights: 'W'});
+    })*/
+    this.update(list);
   }
 }
