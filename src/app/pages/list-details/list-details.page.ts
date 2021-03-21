@@ -6,7 +6,6 @@ import {Todo} from "../../models/todo";
 import {ModalController} from "@ionic/angular";
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
 
 @Component({

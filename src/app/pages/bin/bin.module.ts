@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { BinPageRoutingModule } from './bin-routing.module';
 
 import { BinPage } from './bin.page';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    BinPageRoutingModule
+    BinPageRoutingModule,
+    SharedModule
   ],
   declarations: [BinPage]
 })
