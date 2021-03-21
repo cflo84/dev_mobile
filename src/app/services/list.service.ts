@@ -60,6 +60,7 @@ export class ListService {
 
     const listref = await this.listsCollection.ref.withConverter(listConverter).add(list);
     list.id = listref.id;
+    list.name = list.name.trim();
 
     return listref;
   }
@@ -101,6 +102,8 @@ export class ListService {
   async addTodo(list: List, todo: Todo): Promise<DocumentReference<Todo>> {
     const todoref = await this.getTodoRef(list).add(todo);
     todo.id = todoref.id;
+    todo.name = todo.name.trim();
+
     list.todos.push(todo);
 
     return todoref;

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import firebase from 'firebase';
 import { Observable } from 'rxjs';
 import '@codetrix-studio/capacitor-google-auth';
@@ -11,7 +13,8 @@ import {Plugins} from '@capacitor/core';
 export class AuthService {
   private _user: firebase.User;
 
-  constructor(private auth: AngularFireAuth) { 
+  constructor(private auth: AngularFireAuth,
+            private router: Router) {
     this.auth.authState.subscribe(user => {
       this._user = user;
     });
@@ -134,5 +137,11 @@ export class AuthService {
         let googleUser = await Plugins.GoogleAuth.signIn(null) as any;
         const credential = firebase.auth.GoogleAuthProvider.credential(googleUser.authentication.idToken);
         await this.auth.signInAndRetrieveDataWithCredential(credential);
+    }
+
+    async logOut(): Promise<void> {
+        await this.auth.signOut();
+        this._user = null;
+        this.router.navigateByUrl("/login", { replaceUrl: true });
     }
 }
