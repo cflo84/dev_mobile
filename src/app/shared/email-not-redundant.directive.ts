@@ -23,7 +23,6 @@ export function emailNotRedundantValidator(sharers: Sharer[]) {
         exist = true;
       }
     })
-    console.log("exist ? : "+exist);
     return exist ? {alreadyExist: true} : null;
   };
 }

@@ -135,11 +135,7 @@ export class ListService {
   }
 
   shareList(sharers: Sharer[], list: List) {
-    const userEmail = this.auth.user.email;
     list.sharers = sharers;
-    /*sharers.forEach(e => {
-      list.sharers.push({email: e, rights: 'W'});
-    })*/
     this.update(list);
   }
 }

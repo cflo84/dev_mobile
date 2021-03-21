@@ -44,6 +44,6 @@
 
 
 <ion-footer style="text-align: center; opacity: 0.7">
+    <ion-text  *ngIf="!canWrite()" color="primary">You don't have write access</ion-text>
     <ion-button [disabled]="!canWrite()" expand="block" (click)="presentModal(list)" *ngIf="list$ | async as list">Add a new todo</ion-button>
-    <ion-text  *ngIf="!canWrite()" color="primary" >You don't have write access</ion-text>
 </ion-footer>

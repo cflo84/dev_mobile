@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ListService} from "../../services/list.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from '@angular/router';
 import {List} from "../../models/list";
 import {Todo} from "../../models/todo";
 import {ModalController} from "@ionic/angular";
@@ -23,7 +23,8 @@ export class ListDetailsPage implements OnInit {
     constructor(private listService: ListService,
                 private modalController: ModalController,
                 private route: ActivatedRoute,
-                private auth: AuthService) {
+                private auth: AuthService,
+                private router: Router) {
     }
 
     ngOnInit() {
@@ -35,10 +36,18 @@ export class ListDetailsPage implements OnInit {
                 this.access = 'RW';
             }
             else {
+                let stillSharer = false;
                 l.sharers.forEach(s => {
-                    if(s.email === email) this.access = s.rights;
+                    if(s.email === email) {
+                        this.access = s.rights;
+                        stillSharer = true;
+                    }
+                    console.log(s);
+                });
+                if(!stillSharer) {
+                    this.router.navigate(['/']);
                 }
-            )}
+            }
         });
         this.modalOpened = false;
     }
