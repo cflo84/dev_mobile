@@ -90,4 +90,11 @@ export class HomePage implements OnInit {
   logOut() {
     this.authService.logOut();
   }
+
+  isSharedWithMe (list: List): boolean {
+    return list.owner !== this.authService.user.email;
+  }
+  isSharedByMe (list: List): boolean {
+    return list.owner === this.authService.user.email && list.sharers && list.sharers.length !== 0;
+  }
 }

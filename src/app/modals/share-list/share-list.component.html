@@ -61,7 +61,7 @@
         </ion-buttons>
 
         <ion-label><ion-icon name="mail-outline"></ion-icon></ion-label>
-        <ion-input (ionBlur)="clear()" name="email" formControlName="email" placeholder="Add email's collaborator"></ion-input>
+        <ion-input (ionBlur)="clear()" name="email" formControlName="email" placeholder="Add collaborator's email"></ion-input>
         <ion-text color="danger"
                   *ngIf="shareForm.controls.email.touched &&
                          shareForm.controls.email.errors?.email">
