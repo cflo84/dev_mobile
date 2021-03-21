@@ -85,25 +85,10 @@
         </ion-item-->
         </ion-reorder-group>
     </ion-list>
+
+    <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+        <ion-fab-button color="primary" (click)="presentModal()">
+            <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>
-
-<ion-footer class="ion-no-padding">
-
-    <ion-toolbar class="ion-no-padding">
-        <ion-grid class="ion-no-padding">
-            <ion-row class="ion-text-center">
-                <ion-col>
-                </ion-col>
-                <ion-col size="6">
-                    <h6 *ngIf="lists$ | async as lists">{{ lists.length }} lists</h6>
-                </ion-col>
-                <ion-col>
-                    <ion-button expand="block" fill="clear" (click)="presentModal()">
-                        <ion-icon name="add-outline" size="large" title="Add a new list"></ion-icon>
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-    </ion-toolbar>
-
-</ion-footer>
