@@ -3,18 +3,9 @@
         <ion-title>
             Lists
         </ion-title>
-        <!--<ion-buttons slot="primary" type="icon-only" (click)="toggleReorderGroup()">
-
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>-->
-
 
         <ion-buttons slot="end">
-            <ion-button type="icon-only" (click)="toggleReorderGroup()">
-                <ion-icon *ngIf="isDisabled" name="reorder-two-outline"></ion-icon>
-                <ion-icon *ngIf="!isDisabled" name="checkmark-circle-outline"></ion-icon>
-            </ion-button>
-            <ion-menu-button id="home-menu-button"></ion-menu-button>
+            <ion-menu-button id="home-menu-button" [disabled]="!isDisabled"></ion-menu-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -27,6 +18,15 @@
     </ion-header>
     <ion-content>
         <ion-list>
+            <ion-menu-toggle auto-hide="true">
+                <ion-item (click)="toggleReorderGroup()">
+                    <ion-button slot="start" expand="block" fill="clear">
+                        <ion-icon name="reorder-two-outline" size="large"></ion-icon>
+                    </ion-button>
+                    Reorder lists
+                </ion-item>
+            </ion-menu-toggle>
+            
             <ion-menu-toggle auto-hide="true">
                 <ion-item [routerLink]="['/bin']">
                     <ion-button slot="start" expand="block" fill="clear">
@@ -49,7 +49,7 @@
 </ion-menu>
 
 <ion-content>
-    <ion-searchbar [(ngModel)]="searchInput"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchInput" [disabled]="!isDisabled"></ion-searchbar>
 
     <ion-list>
         <ion-reorder-group *ngIf="lists$ | async as lists" (ionItemReorder)="onRenderItems($event)"
@@ -91,6 +91,11 @@
     <ion-fab horizontal="end" vertical="bottom" slot="fixed">
         <ion-fab-button color="primary" (click)="presentModal()">
             <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+    <ion-fab *ngIf="!isDisabled" horizontal="end" vertical="bottom" slot="fixed">
+        <ion-fab-button color="success" (click)="toggleReorderGroup()">
+            <ion-icon name="checkmark-circle-outline" size="large"></ion-icon>
         </ion-fab-button>
     </ion-fab>
 </ion-content>
