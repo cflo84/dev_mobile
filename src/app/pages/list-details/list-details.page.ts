@@ -42,7 +42,6 @@ export class ListDetailsPage implements OnInit {
                         this.access = s.rights;
                         stillSharer = true;
                     }
-                    console.log(s);
                 });
                 if(!stillSharer) {
                     this.router.navigate(['/']);
