@@ -49,6 +49,8 @@ export class ListDetailsPage implements OnInit {
             }
         });
         this.modalOpened = false;
+
+        this.access = 'RW';
     }
 
     async presentModal(list: List) {
