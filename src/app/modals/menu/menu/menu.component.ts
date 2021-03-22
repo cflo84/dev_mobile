@@ -24,5 +24,6 @@ export class MenuComponent implements OnInit {
   
   logOut() {
     this.authService.logOut();
+    this.dismissPopover();
   }
 }

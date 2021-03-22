@@ -42,7 +42,7 @@ export class HomePage implements OnInit {
     });
 
     menuPopover.onDidDismiss().then(eventDetails => {
-      if (eventDetails.data.reorder === true) {
+      if (eventDetails.data && eventDetails.data.reorder === true) {
         this.toggleReorderGroup();
       }
     });
