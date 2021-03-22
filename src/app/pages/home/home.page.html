@@ -5,48 +5,15 @@
         </ion-title>
 
         <ion-buttons slot="end">
-            <ion-menu-button id="home-menu-button" [disabled]="!isDisabled"></ion-menu-button>
+            <ion-button (click)="presentPopoverMenu($event)" *ngIf="isDisabled">
+                <ion-icon name="ellipsis-horizontal" md="ellipsis-vertical"></ion-icon>
+            </ion-button>
+            <ion-button (click)="toggleReorderGroup()" *ngIf="!isDisabled">
+                <ion-icon name="checkmark-circle" size="large"></ion-icon>
+            </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
-
-<ion-menu side="end" menuId="home-menu" contentId="home-menu-button">
-    <ion-header>
-        <ion-toolbar>
-            <ion-title>Navigate</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content>
-        <ion-list>
-            <ion-menu-toggle auto-hide="true">
-                <ion-item (click)="toggleReorderGroup()">
-                    <ion-button slot="start" expand="block" fill="clear">
-                        <ion-icon name="reorder-two-outline" size="large"></ion-icon>
-                    </ion-button>
-                    Reorder lists
-                </ion-item>
-            </ion-menu-toggle>
-            
-            <ion-menu-toggle auto-hide="true">
-                <ion-item [routerLink]="['/bin']">
-                    <ion-button slot="start" expand="block" fill="clear">
-                        <ion-icon name="trash-outline" size="large" style="color: #ed576b"></ion-icon>
-                    </ion-button>
-                    Trash
-                </ion-item>
-            </ion-menu-toggle>
-
-            <ion-menu-toggle auto-hide="true">
-                <ion-item (click)="logOut()">
-                    <ion-button slot="start" expand="block" fill="clear">
-                        <ion-icon name="log-out-outline" size="large"></ion-icon>
-                    </ion-button>
-                    Log out
-                </ion-item>
-            </ion-menu-toggle>
-        </ion-list>
-    </ion-content>
-</ion-menu>
 
 <ion-content>
     <ion-searchbar [(ngModel)]="searchInput" [disabled]="!isDisabled"></ion-searchbar>
@@ -56,15 +23,17 @@
             [disabled]="isDisabled">
 
             <ion-item-sliding *ngFor="let list of lists | search:searchInput">
-                <ion-item [routerLink]="['/list-details', list?.id]" detail="true">
-                    <ion-label>
-                        <h2>{{list?.name}}</h2>
-                    </ion-label>
-                    <ion-reorder slot="start"></ion-reorder>
-                    <ion-icon *ngIf="isSharedWithMe(list)" name="people-outline" style="color: gray"></ion-icon>
-                    <ion-icon *ngIf="isSharedByMe(list)" name="share-social-outline" style="color: gray"></ion-icon>
-                </ion-item>
-
+                <ion-reorder>
+                    <ion-item [routerLink]="['/list-details', list?.id]" detail="true">
+                        <ion-label>
+                            <h2>{{list?.name}}</h2>
+                        </ion-label>
+                        <ion-reorder slot="start"></ion-reorder>
+                        <ion-icon *ngIf="isSharedWithMe(list)" name="people-outline" style="color: gray"></ion-icon>
+                        <ion-icon *ngIf="isSharedByMe(list)" name="share-social-outline" style="color: gray"></ion-icon>
+                    </ion-item>
+                </ion-reorder>
+                
                 <ion-item-options side="start">
                     <ion-item-option (click)="presentShareModal(list)" color="primary">
                         <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
@@ -76,23 +45,8 @@
                     </ion-item-option>
                 </ion-item-options>
             </ion-item-sliding>
-
-
-            <!--
-        <ion-item *ngFor="let item of listItems">
-            <ion-label>
-            {{item}}
-            </ion-label>
-            <ion-reorder slot="start"></ion-reorder>
-        </ion-item-->
         </ion-reorder-group>
     </ion-list>
-
-    <ion-fab *ngIf="!isDisabled" horizontal="end" vertical="bottom" slot="fixed">
-        <ion-fab-button color="success" (click)="toggleReorderGroup()">
-            <ion-icon name="checkmark-circle-outline" size="large"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
 </ion-content>
 
 <ion-footer class="ion-no-padding">

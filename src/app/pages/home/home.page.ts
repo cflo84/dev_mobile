@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonReorderGroup, ModalController } from '@ionic/angular';
+import { IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -8,6 +8,7 @@ import { ShareListComponent } from '../../modals/share-list/share-list.component
 import { map } from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
 
 @Component({
   selector: 'app-home',
@@ -23,12 +24,30 @@ export class HomePage implements OnInit {
   constructor(private listService: ListService,
     private listBinService: ListBinService,
     private modalController: ModalController,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private popoverController: PopoverController) { }
 
   ngOnInit() {
     this.lists$ = this.listService.getAll();
     this.modalOpened = false;
     this.isDisabled = true;
+  }
+
+  async presentPopoverMenu(ev: any) {
+    const menuPopover = await this.popoverController.create({
+      component: MenuComponent,
+      cssClass: 'my-custom-class',
+      event: ev,
+      translucent: true
+    });
+
+    menuPopover.onDidDismiss().then(eventDetails => {
+      if (eventDetails.data.reorder === true) {
+        this.toggleReorderGroup();
+      }
+    });
+
+    return await menuPopover.present();
   }
 
 
@@ -85,10 +104,6 @@ export class HomePage implements OnInit {
 
   toggleReorderGroup() {
     this.isDisabled = !this.isDisabled;
-  }
-
-  logOut() {
-    this.authService.logOut();
   }
 
   isSharedWithMe (list: List): boolean {

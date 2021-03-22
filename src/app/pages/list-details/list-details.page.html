@@ -1,38 +1,44 @@
 <ion-header [translucent]="true">
     <ion-toolbar *ngIf="list$ | async as list">
         <ion-buttons slot="start">
-            <ion-button backButton><ion-icon name="arrow-back-outline" size="large"></ion-icon></ion-button>
+            <ion-button backButton>
+                <ion-icon name="arrow-back-outline" size="large"></ion-icon>
+            </ion-button>
         </ion-buttons>
         <ion-title>
             {{ list?.name }}
         </ion-title>
         <ion-buttons slot="end">
-            <ion-button (click)="presentShareModal(list)" ><ion-icon name="share-social"></ion-icon></ion-button>
+            <ion-button (click)="presentShareModal(list)">
+                <ion-icon name="share-social"></ion-icon>
+            </ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <ion-list *ngIf="list$ | async as list">
-        <ion-item-sliding *ngFor="let todo of list?.todos" >
-            <ion-item color="{{todo?.isDone ? 'light' : ''}}" >
+        <ion-item-sliding *ngFor="let todo of list?.todos">
+            <ion-item color="{{todo?.isDone ? 'light' : ''}}">
                 <ion-label color="{{todo?.isDone ? 'medium' : ''}}">
                     <h2>{{todo?.name}}</h2>
-                    <p class="ion-text-wrap"
-                            *ngIf='todo?.description !== null && todo?.description !== ""'>
+                    <p class="ion-text-wrap" *ngIf='todo?.description !== null && todo?.description !== ""'>
                         {{ todo.description }}
                     </p>
                 </ion-label>
-                <ion-toggle [disabled]="!canWrite()" (ionChange)="toggleIsDone(list, todo)" checked="{{ todo?.isDone }}"></ion-toggle>
+                <ion-toggle [disabled]="!canWrite()" (ionChange)="toggleIsDone(list, todo)"
+                    checked="{{ todo?.isDone }}"></ion-toggle>
             </ion-item>
 
             <ion-item-options side="end" *ngIf="canWrite()">
                 <ion-item-option (click)="delete(list, todo)" color="danger">
-                    <h2><ion-icon name="trash-outline"></ion-icon></h2>
+                    <h2>
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </h2>
                 </ion-item-option>
             </ion-item-options>
         </ion-item-sliding>
-        
+
         <ion-item-sliding *ngIf="list?.todos.length === 0">
             <ion-item>
                 Nothing there !
@@ -44,6 +50,9 @@
 
 
 <ion-footer class="ion-text-center">
-    <ion-text style="opacity: 0.7"  *ngIf="!canWrite()" color="primary">You don't have write access</ion-text>
-    <ion-button [disabled]="!canWrite()" expand="block" (click)="presentModal(list)" *ngIf="list$ | async as list">Add a new todo</ion-button>
+    <ion-toolbar>
+        <ion-text style="opacity: 0.7" *ngIf="!canWrite()" color="primary">You don't have write access</ion-text>
+        <ion-button [disabled]="!canWrite()" expand="block" (click)="presentModal(list)" *ngIf="list$ | async as list">
+            Add a new todo</ion-button>
+    </ion-toolbar>
 </ion-footer>

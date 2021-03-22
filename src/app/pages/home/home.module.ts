@@ -8,6 +8,7 @@ import { HomePageRoutingModule } from './home-routing.module';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
 import { SearchPipeModule } from '../../shared/search-pipe.module';
+import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
 
 
 @NgModule({
@@ -19,6 +20,6 @@ import { SearchPipeModule } from '../../shared/search-pipe.module';
     ReactiveFormsModule,
     SearchPipeModule
   ],
-  declarations: [HomePage, CreateListComponent, ShareListComponent]
+  declarations: [HomePage, CreateListComponent, ShareListComponent, MenuComponent]
 })
 export class HomePageModule {}

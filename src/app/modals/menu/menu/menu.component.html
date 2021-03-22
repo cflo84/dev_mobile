@@ -1,0 +1,16 @@
+<ion-list>
+    <ion-list-header>Menu</ion-list-header>
+    <ion-item button detail="false" (click)="dismissPopoverWithReorder()">
+        <ion-icon name="repeat-outline"></ion-icon>
+        <ion-label>&nbsp; Reorder lists</ion-label>
+    </ion-item>
+    <ion-item button [routerLink]="['/bin']" detail="false" (click)="dismissPopover()">
+        <ion-icon name="trash-outline" style="color: #ed576b"></ion-icon>
+        <ion-label>&nbsp; Trash</ion-label>
+    </ion-item>
+    <ion-item button detail="false" (click)="logOut()" (click)="dismissPopover()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <ion-label>&nbsp; Log out</ion-label>
+    </ion-item>
+    <ion-item lines="none" detail="false" button (click)="dismissPopover()">Close</ion-item>
+</ion-list>

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ListService} from "../../services/list.service";
 import {ActivatedRoute, Router} from '@angular/router';
 import {List} from "../../models/list";
@@ -8,14 +8,14 @@ import {CreateTodoComponent} from "../../modals/create-todo/create-todo.componen
 import {Observable, Subject} from 'rxjs';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
 import {AuthService} from '../../services/auth.service';
-import {takeUntil} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 @Component({
     selector: 'app-list-details',
     templateUrl: './list-details.page.html',
     styleUrls: ['./list-details.page.scss'],
 })
-export class ListDetailsPage implements OnInit, OnDestroy {
+export class ListDetailsPage implements OnInit {
     listId: string;
     list$: Observable<List>;
     unsubscribe$: Subject<any>;
@@ -33,36 +33,33 @@ export class ListDetailsPage implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.listId = this.route.snapshot.paramMap.get('id');
-        this.list$ = this.listService.getOne(this.listId);
-        this.unsubscribe$ = new Subject<any>();
-        this.list$.pipe(takeUntil(this.unsubscribe$)).subscribe(l => {
-            const email = this.auth.user.email;
-            if(l.owner === email){
-                this.access = 'RW';
-            }
-            else {
-                let stillSharer = false;
-                l.sharers.forEach(s => {
-                    if(s.email === email) {
-                        this.access = s.rights;
-                        stillSharer = true;
-                    }
-                });
-                if(!stillSharer) {
-                    if(this.shareModale !== null) this.shareModale.dismiss();
-                    if(this.todoModale != null) this.todoModale.dismiss();
-                    this.router.navigate(['/']);
+        /*this.list$ = this.listService.getOne(this.listId);
+        this.unsubscribe$ = new Subject<any>();*/
+        this.list$ = this.listService.getOne(this.listId).pipe(
+            tap(l => {
+                const email = this.auth.user.email;
+                if(l.owner === email){
+                    this.access = 'RW';
                 }
-            }
-        });
+                else {
+                    let stillSharer = false;
+                    l.sharers.forEach(s => {
+                        if(s.email === email) {
+                            this.access = s.rights;
+                            stillSharer = true;
+                        }
+                    });
+                    if(!stillSharer) {
+                        if(this.shareModale !== null) this.shareModale.dismiss();
+                        if(this.todoModale != null) this.todoModale.dismiss();
+                        this.router.navigate(['/']);
+                    }
+                }
+            })
+        );
         this.modalOpened = false;
 
         this.access = 'RW';
-    }
-
-    ngOnDestroy() {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
     }
 
     async presentModal(list: List) {
