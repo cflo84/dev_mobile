@@ -10,6 +10,7 @@ export class List {
     id: string;
     name: string;
     owner: string;
+    owner_uid: string;
     sharers: Sharer[];
     todos: Todo[];
     trashed: boolean;
@@ -27,6 +28,7 @@ export const listConverter = {
         return {
             name: list.name,
             owner: list.owner,
+            owner_uid: list.owner_uid,
             sharers: list.sharers,
             trashed: list.trashed || false
         };
