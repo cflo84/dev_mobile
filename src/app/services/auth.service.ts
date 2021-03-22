@@ -136,7 +136,8 @@ export class AuthService {
     async loginGoogle() {
         let googleUser = await Plugins.GoogleAuth.signIn(null) as any;
         const credential = firebase.auth.GoogleAuthProvider.credential(googleUser.authentication.idToken);
-        await this.auth.signInAndRetrieveDataWithCredential(credential);
+        const user = await this.auth.signInAndRetrieveDataWithCredential(credential);
+        this._user = user.user;
     }
 
     async logOut(): Promise<void> {

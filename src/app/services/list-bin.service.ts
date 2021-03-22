@@ -11,14 +11,9 @@ import { ListService } from './list.service';
   providedIn: 'root'
 })
 export class ListBinService {
-  private binCollection: AngularFirestoreCollection<List>;
-  private listCollection: AngularFirestoreCollection<List>;
-
   constructor(private afs: AngularFirestore,
               private auth: AuthService,
               private listService: ListService) {
-    this.binCollection = afs.collection<List>('bin');
-    this.listCollection = afs.collection<List>('lists');
   }
 
   async moveToBin(list: List): Promise<void> {

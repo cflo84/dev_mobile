@@ -16,18 +16,6 @@ export class ListService {
 
   constructor(private afs: AngularFirestore, private auth: AuthService) {
     this.listsCollection = afs.collection<List>('lists');
-
-    this.lists = [];
-    this.lists.push(new List("List1"));
-    this.lists.push(new List("List2"));
-    this.lists[0].todos.push(new Todo("I'm a todo !", "Some description."));
-    this.lists[0].todos.push(new Todo("AnotherOne", ""));
-    this.lists[0].todos[1].isDone = true;
-    this.lists[0].todos.push(new Todo("Hello",
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-      "Vivamus tempor mi sed enim ullamcorper congue. " +
-      "Phasellus vitae metus rutrum, finibus eros vitae,cursus nunc. "));
-    this.lists[0].todos.push(new Todo("AnotherOne", "another one !"));
   }
 
   getOne(id: string): Observable<List> {
