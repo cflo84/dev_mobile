@@ -103,6 +103,7 @@ export class HomePage implements OnInit {
 
 
   toggleReorderGroup() {
+    this.searchInput = "";
     this.isDisabled = !this.isDisabled;
   }
 
