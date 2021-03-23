@@ -37,8 +37,6 @@ export class ListDetailsPage implements OnInit {
 
     ngOnInit() {
         this.listId = this.route.snapshot.paramMap.get('id');
-        /*this.list$ = this.listService.getOne(this.listId);
-        this.unsubscribe$ = new Subject<any>();*/
         this.list$ = this.listService.getOne(this.listId).pipe(
             tap(l => {
                 const email = this.auth.user.email;

@@ -24,6 +24,7 @@ export class HomePage implements OnInit {
   modalOpened: boolean; // Disable the possibility to open multiple modals
   isDisabled: boolean;
   obj: string[];
+  private countList$: Observable<List[]>;
 
   constructor(private listService: ListService,
               private listBinService: ListBinService,
@@ -37,20 +38,20 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.orderStorage.getOrder()
       .then((orderList) => {
-        this.lists$ = this.listService.getAll().pipe(
+        this.lists$ = this.countList$.pipe(
             map(lists => {
               if(orderList && orderList.length !== 0) {
                 lists = lists.sort((a, b) => orderList.indexOf(a.id) - orderList.indexOf(b.id));
               }
               this.obj = lists.map(list => list.id);
               this.orderStorage.reorderStorage(this.obj);
-
               return lists;
             }
         ));
       })
         .catch((err) => console.log(err,"Erreur de récupération de données"));
 
+    this.countList$ = this.listService.getAll();
     this.modalOpened = false;
     this.isDisabled = true;
   }
@@ -111,8 +112,16 @@ export class HomePage implements OnInit {
     const toast = await this.toastController.create({
       message: message,
       duration: 2000,
-      color: "primary",
-      position: "top"
+      position: "bottom",
+      buttons: [
+          {
+            icon: 'close-circle-outline',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+        }
+      ]
     });
     return toast.present();
   }
@@ -122,7 +131,16 @@ export class HomePage implements OnInit {
       message: "Error, the list has not been deleted",
       duration: 2000,
       color: "danger",
-      position: "top"
+      position: "bottom",
+      buttons: [
+        {
+          icon: 'close-circle-outline',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
     });
     return toast.present();
   }
@@ -134,17 +152,13 @@ export class HomePage implements OnInit {
           .then(async () => {
             await this.toastSuccess(list.name + " moved to bin");
           })
-          .catch(async () => {
-            await this.toastError();
-        });
+          .catch(this.toastError);
     } else {
       this.listService.removeSharer(user, list)
           .then(async () => {
             await this.toastSuccess("You've been removed from " + list.name);
           })
-          .catch(async () => {
-            await this.toastError();
-          });
+          .catch(this.toastError);
     }
   }
 
@@ -188,6 +202,7 @@ export class HomePage implements OnInit {
   isSharedWithMe (list: List): boolean {
     return list.owner !== this.authService.user.email;
   }
+
   isSharedByMe (list: List): boolean {
     return list.owner === this.authService.user.email && list.sharers && list.sharers.length !== 0;
   }
