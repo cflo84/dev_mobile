@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
+import {IonList, ModalController, PopoverController} from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -10,6 +10,7 @@ import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
 import {ReorderService} from '../../services/reorder.service';
+import {RenameListComponent} from '../../modals/rename-list/rename-list.component';
 
 @Component({
   selector: 'app-home',
