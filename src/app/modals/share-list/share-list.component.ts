@@ -26,7 +26,7 @@ export class ShareListComponent implements OnInit {
 
   ngOnInit() {
     this.emails = [];
-    this.sharers = JSON.parse(JSON.stringify(this.list.sharers));
+    this.sharers = JSON.parse(JSON.stringify(this.list.sharers)); //deep copy
     this.isSharersModify = false;
     this.shareForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]

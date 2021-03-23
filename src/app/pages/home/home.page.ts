@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
 import { ListService } from '../../services/list.service';
 import { ShareListComponent } from '../../modals/share-list/share-list.component';
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
+import {ReorderService} from '../../services/reorder.service';
 
 @Component({
   selector: 'app-home',
@@ -20,15 +21,33 @@ export class HomePage implements OnInit {
   searchInput: any;
   modalOpened: boolean; // Disable the possibility to open multiple modals
   isDisabled: boolean;
+  obj: string[];
 
   constructor(private listService: ListService,
     private listBinService: ListBinService,
     private modalController: ModalController,
     private authService: AuthService,
-    private popoverController: PopoverController) { }
+    private popoverController: PopoverController,
+    private orderStorage: ReorderService ) {
+  }
 
   ngOnInit() {
-    this.lists$ = this.listService.getAll();
+    this.orderStorage.getOrder()
+      .then((orderList) => {
+        this.lists$ = this.listService.getAll().pipe(
+            map(lists => {
+              if(orderList && orderList.length !== 0) {
+                lists = lists.sort((a, b) => orderList.indexOf(a.id) - orderList.indexOf(b.id));
+              }
+              this.obj = lists.map(list => list.id);
+              this.orderStorage.reorderStorage(this.obj).then(() => {console.log("this.obj : "+this.obj)});
+
+              return lists;
+            }
+        ));
+      })
+        .catch((err) => console.log(err,"Erreur de récupération de données"));
+
     this.modalOpened = false;
     this.isDisabled = true;
   }
@@ -91,20 +110,21 @@ export class HomePage implements OnInit {
 
   onRenderItems(event) {
     console.log(`Moving item from ${event.detail.from} to ${event.detail.to}`);
-    this.lists$.pipe(
-      map(res => {
-        const draggedItem = res.splice(event.detail.from, 1)[0];
-        res.splice(event.detail.to, 0, draggedItem);
-
-      })
-    );
+    const draggedItem = this.obj.splice(event.detail.from, 1)[0];
+    this.obj.splice(event.detail.to, 0, draggedItem);
     event.detail.complete();
   }
 
-
   toggleReorderGroup() {
     this.searchInput = "";
-    this.isDisabled = !this.isDisabled;
+    if(this.isDisabled === false) {
+      console.log(this.orderStorage.getOrder());
+      this.orderStorage.reorderStorage(this.obj);
+      console.log(this.orderStorage.getOrder());
+
+      this.isDisabled = true;
+    }
+    else { this.isDisabled = false; }
   }
 
   isSharedWithMe (list: List): boolean {

@@ -35,7 +35,7 @@ export class ListService {
             map(actions => this.convertSnapshotData<List>(actions))
         ),
         this.auth.authState.pipe(
-            switchMap(user => this.afs.collection("lists", ref => ref.where("sharers", "array-contains-any", [{email: user.email, rights: "RW"}, {email: user.email, rights: "R"}])).snapshotChanges()),
+            switchMap(user => this.afs.collection("lists", ref => ref.where("sharers", "array-contains-any", [{email: user.email, rights: "RW"}, {email: user.email, rights: "R"}]).where("trashed", "==", false)).snapshotChanges()),
             map(actions => this.convertSnapshotData<List>(actions))
         )).pipe(map((x) =>{
       return x[0].concat(x[1]);
