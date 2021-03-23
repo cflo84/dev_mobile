@@ -10,6 +10,7 @@ import { ListDetailsPage } from './list-details.page';
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
 import { EmailNotRedundantValidatorDirective } from '../../shared/email-not-redundant.directive';
 import { SharedModule } from '../../shared/shared.module';
+import { ModifyTodoModule } from 'src/app/modals/modify-todo/modify-todo.module';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { SharedModule } from '../../shared/shared.module';
     IonicModule,
     ListDetailsPageRoutingModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    ModifyTodoModule
   ],
   declarations: [ListDetailsPage, CreateTodoComponent, EmailNotRedundantValidatorDirective]
 })

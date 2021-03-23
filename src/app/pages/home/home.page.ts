@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {IonList, ModalController, PopoverController, ToastController} from '@ionic/angular';
+import { IonList, IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -9,9 +9,7 @@ import { map } from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
-import {ReorderService} from '../../services/reorder.service';
-import {RenameListComponent} from '../../modals/rename-list/rename-list.component';
-import {Router} from '@angular/router';
+import { RenameListComponent } from 'src/app/modals/rename-list/rename-list.component';
 
 @Component({
   selector: 'app-home',
@@ -23,34 +21,14 @@ export class HomePage implements OnInit {
   searchInput: any;
   modalOpened: boolean; // Disable the possibility to open multiple modals
   isDisabled: boolean;
-  obj: string[];
-
   constructor(private listService: ListService,
-              private listBinService: ListBinService,
-              private modalController: ModalController,
-              private authService: AuthService,
-              private popoverController: PopoverController,
-              private orderStorage: ReorderService,
-              private toastController: ToastController ) {
-  }
+    private listBinService: ListBinService,
+    private modalController: ModalController,
+    private authService: AuthService,
+    private popoverController: PopoverController) { }
 
   ngOnInit() {
-    this.orderStorage.getOrder()
-      .then((orderList) => {
-        this.lists$ = this.listService.getAll().pipe(
-            map(lists => {
-              if(orderList && orderList.length !== 0) {
-                lists = lists.sort((a, b) => orderList.indexOf(a.id) - orderList.indexOf(b.id));
-              }
-              this.obj = lists.map(list => list.id);
-              this.orderStorage.reorderStorage(this.obj);
-
-              return lists;
-            }
-        ));
-      })
-        .catch((err) => console.log(err,"Erreur de récupération de données"));
-
+    this.lists$ = this.listService.getAll();
     this.modalOpened = false;
     this.isDisabled = true;
   }
@@ -107,45 +85,8 @@ export class HomePage implements OnInit {
     return await modal.present();
   }
 
-  async toastSuccess(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 2000,
-      color: "primary",
-      position: "top"
-    });
-    return toast.present();
-  }
-
-  async toastError() {
-    const toast = await this.toastController.create({
-      message: "Error, the list has not been deleted",
-      duration: 2000,
-      color: "danger",
-      position: "top"
-    });
-    return toast.present();
-  }
-
   moveToBin(list: List) {
-    const user = this.authService.user.email;
-    if(list.owner === user) {
-      this.listBinService.moveToBin(list)
-          .then(async () => {
-            await this.toastSuccess(list.name + " moved to bin");
-          })
-          .catch(async () => {
-            await this.toastError();
-        });
-    } else {
-      this.listService.removeSharer(user, list)
-          .then(async () => {
-            await this.toastSuccess("You've been removed from " + list.name);
-          })
-          .catch(async () => {
-            await this.toastError();
-          });
-    }
+    this.listBinService.moveToBin(list);
   }
 
   async rename(list: List, listsHtmlElement: IonList) {
@@ -169,20 +110,21 @@ export class HomePage implements OnInit {
   }
 
   onRenderItems(event) {
-    const draggedItem = this.obj.splice(event.detail.from, 1)[0];
-    this.obj.splice(event.detail.to, 0, draggedItem);
+    console.log(`Moving item from ${event.detail.from} to ${event.detail.to}`);
+    this.lists$.pipe(
+      map(res => {
+        const draggedItem = res.splice(event.detail.from, 1)[0];
+        res.splice(event.detail.to, 0, draggedItem);
+
+      })
+    );
     event.detail.complete();
   }
 
 
   toggleReorderGroup() {
     this.searchInput = "";
-    if(this.isDisabled === false) {
-      this.orderStorage.reorderStorage(this.obj);
-
-      this.isDisabled = true;
-    }
-    else { this.isDisabled = false; }
+    this.isDisabled = !this.isDisabled;
   }
 
   isSharedWithMe (list: List): boolean {

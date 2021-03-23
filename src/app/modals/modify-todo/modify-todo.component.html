@@ -1,0 +1,34 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Modify a todo</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <form [formGroup]="todoForm" (submit)="save()">
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input formControlName="name" required></ion-input>
+      <ion-text color="danger"
+                *ngIf="todoForm.controls.name.touched &&
+                       todoForm.controls.name.errors?.required">
+        This field is required
+      </ion-text>
+      <ion-text color="danger"
+                *ngIf="todoForm.controls.name.touched &&
+                       todoForm.controls.name.errors?.minlength">
+        Min length 3
+      </ion-text>
+    </ion-item>
+
+
+    <ion-item>
+      <ion-label position="floating">Description</ion-label>
+      <ion-input formControlName="description"></ion-input>
+    </ion-item>
+
+    <ion-button type="submit" expand="block" [disabled]="!todoForm.valid">Submit</ion-button>
+  </form>
+</ion-content>

@@ -11,6 +11,7 @@ import {AuthService} from '../../services/auth.service';
 import {tap} from 'rxjs/operators';
 import { RenameListComponent } from 'src/app/modals/rename-list/rename-list.component';
 import { ListBinService } from 'src/app/services/list-bin.service';
+import { ModifyTodoComponent } from 'src/app/modals/modify-todo/modify-todo.component';
 
 @Component({
     selector: 'app-list-details',
@@ -37,8 +38,6 @@ export class ListDetailsPage implements OnInit {
 
     ngOnInit() {
         this.listId = this.route.snapshot.paramMap.get('id');
-        /*this.list$ = this.listService.getOne(this.listId);
-        this.unsubscribe$ = new Subject<any>();*/
         this.list$ = this.listService.getOne(this.listId).pipe(
             tap(l => {
                 const email = this.auth.user.email;
@@ -151,4 +150,25 @@ export class ListDetailsPage implements OnInit {
             toast.present();
         });
     }
+
+    async modifyTodo(todo: Todo, list: List, todosHtmlElement: IonList) {
+        if (this.modalOpened) return;
+        this.modalOpened = true;
+    
+        const modal = await this.modalController.create({
+          component: ModifyTodoComponent,
+          cssClass: 'my-custom-class',
+          componentProps: {
+            todo: todo,
+            list: list
+          }
+        });
+    
+        modal.onDidDismiss().then(() => {
+          this.modalOpened = false;
+          todosHtmlElement.closeSlidingItems();
+        })
+    
+        return await modal.present();
+      }
 }
