@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {IonList, ModalController, PopoverController, ToastController} from '@ionic/angular';
+import {IonList, IonReorderGroup, ModalController, PopoverController, ToastController} from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -10,7 +10,7 @@ import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
 import {ReorderService} from '../../services/reorder.service';
-import {RenameListComponent} from '../../modals/rename-list/rename-list.component';
+import {RenameListComponent} from 'src/app/modals/rename-list/rename-list.component';
 import {Router} from '@angular/router';
 
 @Component({
@@ -202,7 +202,6 @@ export class HomePage implements OnInit {
   isSharedWithMe (list: List): boolean {
     return list.owner !== this.authService.user.email;
   }
-
   isSharedByMe (list: List): boolean {
     return list.owner === this.authService.user.email && list.sharers && list.sharers.length !== 0;
   }
