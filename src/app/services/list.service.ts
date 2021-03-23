@@ -5,6 +5,7 @@ import {List, listConverter, Sharer} from '../models/list';
 import {Todo, todoConverter} from '../models/todo';
 import {AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentReference} from '@angular/fire/firestore';
 import {AuthService} from './auth.service';
+import {getSharedAnalytics} from '@angular/cli/models/analytics';
 
 
 @Injectable({
@@ -122,8 +123,16 @@ export class ListService {
     });
   }
 
-  shareList(sharers: Sharer[], list: List) {
+  async shareList(sharers: Sharer[], list: List): Promise<void> {
     list.sharers = sharers;
-    this.update(list);
+    return await this.update(list);
+  }
+
+  async removeSharer(email: string, list: List): Promise<void> {
+    const index = list.sharers.findIndex(sharer => sharer.email === email);
+    if (index !== -1) {
+      list.sharers = list.sharers.splice(index, 0);
+      return await this.update(list);
+    }
   }
 }

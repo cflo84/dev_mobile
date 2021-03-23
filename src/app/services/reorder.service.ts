@@ -39,17 +39,14 @@ export class ReorderService {
     if (this.order === null) {
       this.order = [];
     }
-    console.log('getStorage', this.order);
   }
 
   async reorderStorage(newOrder: string[]) {
     this.order = [...newOrder];
-    console.log(this.order);
     await Storage.set({
       key: this.key,
       value: JSON.stringify(this.order)
     });
-    console.log(this.getStorage());
   }
 
   async clear() {

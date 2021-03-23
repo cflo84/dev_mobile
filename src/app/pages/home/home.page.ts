@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {IonList, ModalController, PopoverController} from '@ionic/angular';
+import {IonList, ModalController, PopoverController, ToastController} from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
 import {ReorderService} from '../../services/reorder.service';
 import {RenameListComponent} from '../../modals/rename-list/rename-list.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -25,11 +26,12 @@ export class HomePage implements OnInit {
   obj: string[];
 
   constructor(private listService: ListService,
-    private listBinService: ListBinService,
-    private modalController: ModalController,
-    private authService: AuthService,
-    private popoverController: PopoverController,
-    private orderStorage: ReorderService ) {
+              private listBinService: ListBinService,
+              private modalController: ModalController,
+              private authService: AuthService,
+              private popoverController: PopoverController,
+              private orderStorage: ReorderService,
+              private toastController: ToastController ) {
   }
 
   ngOnInit() {
@@ -41,7 +43,7 @@ export class HomePage implements OnInit {
                 lists = lists.sort((a, b) => orderList.indexOf(a.id) - orderList.indexOf(b.id));
               }
               this.obj = lists.map(list => list.id);
-              this.orderStorage.reorderStorage(this.obj).then(() => {console.log("this.obj : "+this.obj)});
+              this.orderStorage.reorderStorage(this.obj);
 
               return lists;
             }
@@ -105,8 +107,45 @@ export class HomePage implements OnInit {
     return await modal.present();
   }
 
+  async toastSuccess(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      color: "primary",
+      position: "top"
+    });
+    return toast.present();
+  }
+
+  async toastError() {
+    const toast = await this.toastController.create({
+      message: "Error, the list has not been deleted",
+      duration: 2000,
+      color: "danger",
+      position: "top"
+    });
+    return toast.present();
+  }
+
   moveToBin(list: List) {
-    this.listBinService.moveToBin(list);
+    const user = this.authService.user.email;
+    if(list.owner === user) {
+      this.listBinService.moveToBin(list)
+          .then(async () => {
+            await this.toastSuccess(list.name + " moved to bin");
+          })
+          .catch(async () => {
+            await this.toastError();
+        });
+    } else {
+      this.listService.removeSharer(user, list)
+          .then(async () => {
+            await this.toastSuccess("You've been removed from " + list.name);
+          })
+          .catch(async () => {
+            await this.toastError();
+          });
+    }
   }
 
   async rename(list: List, listsHtmlElement: IonList) {
@@ -130,7 +169,6 @@ export class HomePage implements OnInit {
   }
 
   onRenderItems(event) {
-    console.log(`Moving item from ${event.detail.from} to ${event.detail.to}`);
     const draggedItem = this.obj.splice(event.detail.from, 1)[0];
     this.obj.splice(event.detail.to, 0, draggedItem);
     event.detail.complete();
@@ -140,9 +178,7 @@ export class HomePage implements OnInit {
   toggleReorderGroup() {
     this.searchInput = "";
     if(this.isDisabled === false) {
-      console.log(this.orderStorage.getOrder());
       this.orderStorage.reorderStorage(this.obj);
-      console.log(this.orderStorage.getOrder());
 
       this.isDisabled = true;
     }
