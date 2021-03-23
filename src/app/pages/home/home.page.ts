@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
+import { IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
 import { ListService } from '../../services/list.service';
 import { ShareListComponent } from '../../modals/share-list/share-list.component';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
@@ -108,12 +108,33 @@ export class HomePage implements OnInit {
     this.listBinService.moveToBin(list);
   }
 
+  async rename(list: List, listsHtmlElement: IonList) {
+    if (this.modalOpened) return;
+    this.modalOpened = true;
+
+    const modal = await this.modalController.create({
+      component: RenameListComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        list: list
+      }
+    });
+
+    modal.onDidDismiss().then(() => {
+      this.modalOpened = false;
+      listsHtmlElement.closeSlidingItems();
+    })
+
+    return await modal.present();
+  }
+
   onRenderItems(event) {
     console.log(`Moving item from ${event.detail.from} to ${event.detail.to}`);
     const draggedItem = this.obj.splice(event.detail.from, 1)[0];
     this.obj.splice(event.detail.to, 0, draggedItem);
     event.detail.complete();
   }
+
 
   toggleReorderGroup() {
     this.searchInput = "";

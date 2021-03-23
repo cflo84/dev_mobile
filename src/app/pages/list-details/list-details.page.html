@@ -9,8 +9,8 @@
             {{ list?.name }}
         </ion-title>
         <ion-buttons slot="end">
-            <ion-button (click)="presentShareModal(list)">
-                <ion-icon name="share-social"></ion-icon>
+            <ion-button (click)="moveToBin(list)">
+                <ion-icon name="trash-outline" color="danger"></ion-icon>
             </ion-button>
         </ion-buttons>
     </ion-toolbar>
@@ -47,12 +47,27 @@
     </ion-list>
 </ion-content>
 
-
-
-<ion-footer class="ion-text-center">
-    <ion-toolbar>
-        <ion-text style="opacity: 0.7" *ngIf="!canWrite()" color="primary">You don't have write access</ion-text>
-        <ion-button [disabled]="!canWrite()" expand="block" (click)="presentModal(list)" *ngIf="list$ | async as list">
-            Add a new todo</ion-button>
+<ion-footer class="ion-no-padding">
+    <ion-text style="opacity: 0.7" *ngIf="!canWrite()" color="primary">You don't have write access</ion-text>
+    <ion-toolbar class="ion-no-padding">
+        <ion-grid class="ion-no-padding">
+            <ion-row class="ion-text-center" *ngIf="list$ | async as list">
+                <ion-col>
+                    <ion-button [disabled]="!canWrite()" expand="block" fill="clear" (click)="rename(list)">
+                        <ion-icon name="pencil-outline" size="large" title="Rename the list"></ion-icon>
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button (click)="presentShareModal(list)" expand="block" fill="clear">
+                        <ion-icon name="share-social" size="large"></ion-icon>
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button [disabled]="!canWrite()" expand="block" fill="clear" (click)="presentModal(list)">
+                        <ion-icon name="add-outline" size="large" title="Add a new todo"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
     </ion-toolbar>
 </ion-footer>
