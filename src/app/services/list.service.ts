@@ -45,7 +45,6 @@ export class ListService {
 
   async add(list: List): Promise<DocumentReference<List>> {
     list.owner = this.auth.user.email;
-    list.owner_uid = this.auth.user.uid;
 
     const listref = await this.listsCollection.ref.withConverter(listConverter).add(list);
     list.id = listref.id;
