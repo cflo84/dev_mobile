@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
+import { IonList, IonReorderGroup, ModalController, PopoverController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { CreateListComponent } from 'src/app/modals/create-list/create-list.component';
 import { List } from '../../models/list';
@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { ListBinService } from '../../services/list-bin.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MenuComponent } from 'src/app/modals/menu/menu/menu.component';
+import { RenameListComponent } from 'src/app/modals/rename-list/rename-list.component';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,6 @@ export class HomePage implements OnInit {
   searchInput: any;
   modalOpened: boolean; // Disable the possibility to open multiple modals
   isDisabled: boolean;
-
   constructor(private listService: ListService,
     private listBinService: ListBinService,
     private modalController: ModalController,
@@ -87,6 +87,26 @@ export class HomePage implements OnInit {
 
   moveToBin(list: List) {
     this.listBinService.moveToBin(list);
+  }
+
+  async rename(list: List, listsHtmlElement: IonList) {
+    if (this.modalOpened) return;
+    this.modalOpened = true;
+
+    const modal = await this.modalController.create({
+      component: RenameListComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        list: list
+      }
+    });
+
+    modal.onDidDismiss().then(() => {
+      this.modalOpened = false;
+      listsHtmlElement.closeSlidingItems();
+    })
+
+    return await modal.present();
   }
 
   onRenderItems(event) {

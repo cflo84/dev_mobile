@@ -3,12 +3,14 @@ import {ListService} from "../../services/list.service";
 import {ActivatedRoute, Router} from '@angular/router';
 import {List} from "../../models/list";
 import {Todo} from "../../models/todo";
-import {ModalController} from "@ionic/angular";
+import {IonList, ModalController, ToastController} from "@ionic/angular";
 import {CreateTodoComponent} from "../../modals/create-todo/create-todo.component";
 import {Observable, Subject} from 'rxjs';
 import {ShareListComponent} from '../../modals/share-list/share-list.component';
 import {AuthService} from '../../services/auth.service';
 import {tap} from 'rxjs/operators';
+import { RenameListComponent } from 'src/app/modals/rename-list/rename-list.component';
+import { ListBinService } from 'src/app/services/list-bin.service';
 
 @Component({
     selector: 'app-list-details',
@@ -25,10 +27,12 @@ export class ListDetailsPage implements OnInit {
     modalOpened: boolean; // Disable the possibility to open multiple modals
 
     constructor(private listService: ListService,
+                private listBinService: ListBinService,
                 private modalController: ModalController,
                 private route: ActivatedRoute,
                 private auth: AuthService,
-                private router: Router) {
+                private router: Router,
+                private toastController: ToastController) {
     }
 
     ngOnInit() {
@@ -101,6 +105,26 @@ export class ListDetailsPage implements OnInit {
         return await this.shareModale.present();
     }
 
+    
+  async rename(list: List) {
+    if (this.modalOpened) return;
+    this.modalOpened = true;
+
+    const modal = await this.modalController.create({
+      component: RenameListComponent,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        list: list
+      }
+    });
+
+    modal.onDidDismiss().then(() => {
+      this.modalOpened = false;
+    })
+
+    return await modal.present();
+  }
+
     delete(list: List, todo: Todo) {
         this.listService.deleteTodo(list, todo);
     }
@@ -112,5 +136,19 @@ export class ListDetailsPage implements OnInit {
 
     canWrite() {
         return this.access === 'RW';
+    }
+
+    moveToBin(list: List) {
+      this.listBinService.moveToBin(list)
+        .then(() => this.router.navigate(['/']))
+        .catch(async () => {
+            const toast = await this.toastController.create({
+                message: "Error, the list has not been deleted",
+                duration: 2000,
+                color: "danger",
+                position: "top"
+            });
+            toast.present();
+        });
     }
 }
