@@ -14,9 +14,9 @@ import {AuthService} from '../../services/auth.service';
 export class ShareListComponent implements OnInit {
   @Input() list: List;
   shareForm: FormGroup;
-  private emails: string[];
-  private sharers: Sharer[];
-  private isSharersModify: boolean;
+  emails: string[];
+  sharers: Sharer[];
+  isSharersModify: boolean;
 
   constructor(private modalController: ModalController,
               private fb: FormBuilder,
