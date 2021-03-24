@@ -137,18 +137,59 @@ export class ListDetailsPage implements OnInit {
         return this.access === 'RW';
     }
 
-    moveToBin(list: List) {
-      this.listBinService.moveToBin(list)
-        .then(() => this.router.navigate(['/']))
-        .catch(async () => {
-            const toast = await this.toastController.create({
-                message: "Error, the list has not been deleted",
-                duration: 2000,
-                color: "danger",
-                position: "top"
-            });
-            toast.present();
+    async toastSuccess(message: string) {
+        const toast = await this.toastController.create({
+            message: message,
+            duration: 2000,
+            position: "bottom",
+            buttons: [
+                {
+                    icon: 'close-circle-outline',
+                    role: 'cancel',
+                    handler: () => {
+                        console.log('Cancel clicked');
+                    }
+                }
+            ]
         });
+        return toast.present();
+    }
+
+    async toastError() {
+        const toast = await this.toastController.create({
+            message: "Error, the list has not been deleted",
+            duration: 2000,
+            color: "danger",
+            position: "bottom",
+            buttons: [
+                {
+                    icon: 'close-circle-outline',
+                    role: 'cancel',
+                    handler: () => {
+                        console.log('Cancel clicked');
+                    }
+                }
+            ]
+        });
+        return toast.present();
+    }
+
+
+    moveToBin(list: List) {
+        const user = this.auth.user.email;
+        if(list.owner === user) {
+            this.listBinService.moveToBin(list)
+                .then(async () => {
+                    await this.toastSuccess(list.name + " moved to bin");
+                })
+                .catch(this.toastError);
+        } else {
+            this.listService.removeSharer(user, list)
+                .then(async () => {
+                    await this.toastSuccess("You've been removed from " + list.name);
+                })
+                .catch(this.toastError);
+        }
     }
 
     async modifyTodo(todo: Todo, list: List, todosHtmlElement: IonList) {
