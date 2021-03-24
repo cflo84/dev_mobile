@@ -37,6 +37,8 @@ export class ListDetailsPage implements OnInit {
     }
 
     ngOnInit() {
+        this.shareModale = null;
+        this.todoModale = null;
         this.listId = this.route.snapshot.paramMap.get('id');
         this.list$ = this.listService.getOne(this.listId).pipe(
             tap(l => {
@@ -186,6 +188,7 @@ export class ListDetailsPage implements OnInit {
         } else {
             this.listService.removeSharer(user, list)
                 .then(async () => {
+                    this.router.navigate(['/']);
                     await this.toastSuccess("You've been removed from " + list.name);
                 })
                 .catch(this.toastError);
