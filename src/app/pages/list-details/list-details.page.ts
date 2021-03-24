@@ -182,17 +182,18 @@ export class ListDetailsPage implements OnInit {
         if(list.owner === user) {
             this.listBinService.moveToBin(list)
                 .then(async () => {
+
                     await this.toastSuccess(list.name + " moved to bin");
                 })
                 .catch(this.toastError);
         } else {
             this.listService.removeSharer(user, list)
                 .then(async () => {
-                    this.router.navigate(['/']);
                     await this.toastSuccess("You've been removed from " + list.name);
                 })
                 .catch(this.toastError);
         }
+        this.router.navigate(['/']);
     }
 
     async modifyTodo(todo: Todo, list: List, todosHtmlElement: IonList) {
